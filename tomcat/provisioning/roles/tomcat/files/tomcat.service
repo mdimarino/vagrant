@@ -6,17 +6,17 @@ After=network.target
 Type=forking
 
 Environment=JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre
-Environment=CATALINA_PID=/www/tomcat/temp/tomcat.pid
-Environment=CATALINA_HOME=/www/tomcat
-Environment=CATALINA_BASE=/www/tomcat
+Environment=CATALINA_PID=/opt/app/tomcat/temp/tomcat.pid
+Environment=CATALINA_HOME=/opt/app/tomcat
+Environment=CATALINA_BASE=/opt/app/tomcat
 Environment='CATALINA_OPTS=-Xmx256m -Xms256m -server -XX:+UseParallelGC'
 Environment='JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom'
 
-ExecStart=/www/tomcat/bin/startup.sh
-ExecStop=/www/tomcat/bin/shutdown.sh
+ExecStart=/opt/app/tomcat/bin/startup.sh
+ExecStop=/opt/app/tomcat/bin/shutdown.sh
 
-User=www
-Group=www
+User=app
+Group=app
 UMask=0007
 RestartSec=10
 Restart=always

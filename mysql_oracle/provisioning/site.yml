@@ -9,16 +9,16 @@
   - common
   - mysql
 
-- name: apply common configuration to mysql-masters
-  hosts: mysql-masters
-  become: true
-
-  roles:
-  - mysql-masters
-
-- name: apply common configuration to mysql-slaves
-  hosts: mysql-slaves
-  become: true
-
-  roles:
-  - mysql-slaves
+# - name: apply common configuration to mysql-masters
+#  hosts: mysql-masters
+#  become: true
+#
+#  roles:
+#  - mysql-masters
+#
+# - name: apply common configuration to mysql-slaves
+#  hosts: mysql-slaves
+#  become: true
+#
+#  roles:
+#  - mysql-slaves

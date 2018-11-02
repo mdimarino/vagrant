@@ -13,7 +13,7 @@
   - openjdk-8-jdk-headless
   - jfrog-artifactory-oss
   - nginx
-  notify: start artifactory
+  # notify: start artifactory
 
 - name: change /etc/nginx/sites-available/artifactory file
   copy: src=artifactory.nginx dest=/etc/nginx/sites-available/artifactory owner=root group=root mode=0644 backup=yes

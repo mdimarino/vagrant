@@ -5,19 +5,17 @@
   apt_key: url=https://pkg.jenkins.io/debian/jenkins.io.key state=present
 
 - name: add apt repository for jenkins
-  apt_repository: repo='deb http://pkg.jenkins.io/debian-stable binary/' filename='jenkins' state=present update_cache=yes
+  apt_repository: repo='deb http://pkg.jenkins.io/debian binary/' filename='jenkins' state=present update_cache=yes
+
+- name: install openjdk-8-jdk package first
+  apt: name=openjdk-8-jdk state=present
 
 - name: install packages
   apt: name={{ item }} state=present
   with_items:
-  - default-jdk-headless
   - jenkins
   - nginx
   - maven
-
-- name: change /etc/default/jenkins file
-  copy: src=default_jenkins dest=/etc/default/jenkins owner=root group=root mode=0644 backup=yes
-  notify: restart jenkins
 
 - name: change /etc/nginx/sites-available/jenkins file
   copy: src=nginx_jenkins dest=/etc/nginx/sites-available/jenkins owner=root group=root mode=0644 backup=yes

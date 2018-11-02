@@ -5,7 +5,7 @@
   apt_key: url='https://download.docker.com/linux/ubuntu/gpg' state=present
 
 - name: add apt repository for docker
-  apt_repository: repo='deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic edge' filename='docker' state=present update_cache=yes
+  apt_repository: repo='deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable' filename='docker' state=present update_cache=yes
 
 - name: install docker-ce package
   apt: name=docker-ce state=present
@@ -17,5 +17,3 @@
   apt: name={{ item }} state=present autoremove=yes
   with_items:
     - docker-compose
-    - openjdk-8-jdk-headless
-    - maven

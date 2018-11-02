@@ -4,26 +4,26 @@
 - name: install openjdk-8-jdk-headless
   apt: name=openjdk-8-jdk-headless state=present update_cache=yes
 
-- name: add group www
-  group: name=www gid=1001
+- name: add group app
+  group: name=app gid=1001
 
-- name: add user www
-  user: name=www comment='WWW User Account' createhome=yes group=www uid=1001 home=/www shell=/bin/bash state=present
+- name: add user app
+  user: name=app comment='Application User Account' createhome=yes group=app uid=1001 home=/opt/app shell=/bin/bash state=present
 
-- name: change .bashrc file for user www
-  copy: src=.bashrc.www dest=/www/.bashrc owner=www group=www mode=0644 backup=yes
+- name: change .bashrc file for user app
+  copy: src=.bashrc.app dest=/opt/app/.bashrc owner=app group=app mode=0644 backup=yes
 
 - name: install tomcat from web archive
-  unarchive: remote_src=yes src=https://archive.apache.org/dist/tomcat/tomcat-8/v8.0.47/bin/apache-tomcat-8.0.47.tar.gz dest=/www owner=www group=www creates=/www/tomcat/bin/version.sh
+  unarchive: remote_src=yes src=https://archive.apache.org/dist/tomcat/tomcat-8/v8.0.53/bin/apache-tomcat-8.0.53.tar.gz dest=/opt/app owner=app group=app creates=/opt/app/tomcat/bin/version.sh
 
-- name: change ownership of /www/apache-tomcat-8.0.47
-  file: path=/www/apache-tomcat-8.0.47 owner=www group=www
+- name: change ownership of /opt/app/apache-tomcat-8.0.53
+  file: path=/opt/app/apache-tomcat-8.0.53 owner=app group=app
 
-- name: create symbolic link /www/tomcat
-  file: src=/www/apache-tomcat-8.0.47 dest=/www/tomcat owner=www group=www state=link
+- name: create symbolic link /opt/app/tomcat
+  file: src=/opt/app/apache-tomcat-8.0.53 dest=/opt/app/tomcat owner=app group=app state=link
 
-- name: set /www/tomcat/conf/tomcat-users.xml
-  copy: src=tomcat-users.xml dest=/www/tomcat/conf/tomcat-users.xml owner=www group=www mode=0644 backup=yes
+- name: set /opt/app/tomcat/conf/tomcat-users.xml
+  copy: src=tomcat-users.xml dest=/opt/app/tomcat/conf/tomcat-users.xml owner=app group=app mode=0644 backup=yes
   notify: restart tomcat
 
 - name: create /etc/systemd/system/tomcat.service file
@@ -39,5 +39,5 @@
   copy: src=default.nginx dest=/etc/nginx/sites-available/default owner=root group=root mode=0644 backup=yes
   notify: restart nginx
 
-- name: set sudo rule for www user
-  copy: src=10-www.sudoers dest=/etc/sudoers.d/10-zoom owner=root group=root mode=0440 backup=yes
+- name: set sudo rule for app user
+  copy: src=10-app.sudoers dest=/etc/sudoers.d/10-app owner=root group=root mode=0440 backup=yes
