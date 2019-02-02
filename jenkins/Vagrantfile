@@ -70,29 +70,53 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get install -y apache2
   # SHELL
 
-  config.vm.define "jenkins", primary: true do |instance|
+  # config.vm.define "jenkins", primary: true do |instance|
+  #
+  #   instance.vm.hostname = "jenkins.vagrant.local"
+  #
+  #   instance.vm.network "private_network", ip: "192.168.56.161"
+  #
+  #   instance.vm.provider "virtualbox" do |vb|
+  #     # Display the VirtualBox GUI when booting the machine
+  #     # vb.gui = true
+  #
+  #     # Customize the amount of memory on the VM:
+  #     # vb.memory = "2048"
+  #
+  #     vb.customize ["modifyvm", :id, "--audio", "none"]
+  #   end
+  #
+  #   # instance.vm.provision "shell", path: "bootstrap.sh"
+  #
+  #   instance.vm.provision :ansible do |ansible|
+  #     ansible.playbook = "provisioning/site.yml"
+  #     # ansible.verbose = "v"
+  #   end
+  #
+  # end
 
-    instance.vm.hostname = "jenkins.vagrant.local"
+  N = 3
+  (1..N).each do |instance_id|
+    config.vm.define "jenkins-0#{instance_id}" do |instance|
+      instance.vm.hostname = "jenkins-0#{instance_id}.vagrant.local"
+      instance.vm.network "private_network", ip: "192.168.56.16#{instance_id}"
 
-    instance.vm.network "private_network", ip: "192.168.56.161"
-
-    instance.vm.provider "virtualbox" do |vb|
-      # Display the VirtualBox GUI when booting the machine
-      # vb.gui = true
-
-      # Customize the amount of memory on the VM:
-      # vb.memory = "2048"
-
-      vb.customize ["modifyvm", :id, "--audio", "none"]
+      # Only execute once the Ansible provisioner,
+      # when all the machines are up and ready.
+      if instance_id == 3
+        instance.vm.provision :ansible do |ansible|
+          # Disable default limit to connect to all the machines
+          ansible.limit = "all"
+          ansible.playbook = "provisioning/site.yml"
+          ansible.groups = {
+            "jenkins-masters" => ["jenkins-01"],
+            "jenkins-slaves" => ["jenkins-02", "jenkins-03"],
+            "all_groups:children" => ["jenkins-masters", "jenkins-slaves"],
+          }
+          # ansible.verbose = "v"
+        end
+      end
     end
-
-    # instance.vm.provision "shell", path: "bootstrap.sh"
-
-    instance.vm.provision :ansible do |ansible|
-      ansible.playbook = "provisioning/site.yml"
-      # ansible.verbose = "v"
-    end
-
   end
 
 end

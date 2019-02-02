@@ -17,4 +17,17 @@
   roles:
   - common
   - docker
-  - jenkins
+
+- name: apply jenkins-masters configuration to jenkins masters nodes
+  hosts: jenkins-masters
+  become: True
+
+  roles:
+  - jenkins-masters
+
+- name: apply jenkins-slaves configuration to jenkins slaves nodes
+  hosts: jenkins-slaves
+  become: True
+
+  roles:
+  - jenkins-slaves
