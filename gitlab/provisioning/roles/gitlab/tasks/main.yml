@@ -1,0 +1,37 @@
+---
+# tasks file for gitlab
+
+- name: check if GitLab configuration file already exists
+  stat: path=/etc/gitlab/gitlab.rb
+  register: gitlab_config_file
+
+- name: check if GitLab is already installed
+  stat: path=/usr/bin/gitlab-ctl
+  register: gitlab_file
+
+- name: install GitLab dependencies
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - openssh-server
+      - exim4
+      - curl
+      - ca-certificates
+      - tzdata
+
+- name: download GitLab repository installation script
+  get_url:
+    url: "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh"
+    dest: /tmp/gitlab_install_repository.sh
+    validate_certs: True
+  when: not gitlab_file.stat.exists
+
+- name: install GitLab repository
+  command: /bin/bash /tmp/gitlab_install_repository.sh
+  when: not gitlab_file.stat.exists
+
+- name: install GitLab
+  apt: name=gitlab-ce state=present update_cache=yes
+  environment:
+    EXTERNAL_URL: "http://gitlab.vagrant.local"
+  when: not gitlab_file.stat.exists
