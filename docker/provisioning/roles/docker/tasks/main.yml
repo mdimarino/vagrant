@@ -13,7 +13,5 @@
 - name: add vagrant user to docker group
   user: name=vagrant groups=docker append=yes
 
-- name: install packages
-  apt: name={{ item }} state=present autoremove=yes
-  with_items:
-    - docker-compose
+- name: install docker-compose package
+  apt: name=docker-compose state=present
