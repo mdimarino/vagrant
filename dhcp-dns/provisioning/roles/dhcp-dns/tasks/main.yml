@@ -1,0 +1,10 @@
+---
+# tasks file for dhcp-dns
+
+- name: install packages
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - isc-dhcp-server
+      - bind9
+      - dnsutils
