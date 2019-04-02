@@ -28,11 +28,12 @@
   register: reboot
 
 - name: install packages
-  apt: name={{ item }} state=present autoremove=yes
-  with_items:
-    - ntp
-    - vim
-    - libpam-systemd
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - ntp
+      - vim
+      - libpam-systemd
 
 - name: set default system editor
   alternatives: name=editor path=/usr/bin/vim.basic
