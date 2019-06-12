@@ -1,2 +1,5 @@
 ---
-# handlers file for kuberbetes
+# handlers file for kubernetes
+
+- name: docker status
+  service: name=docker state=started

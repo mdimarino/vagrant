@@ -1,0 +1,131 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Add IP address of kmaster host to /etc/hosts
+    lineinfile:
+      dest: /etc/hosts
+      line: "192.168.50.10 kmaster.vagrant.local kmaster"
+      state: present
+
+  - name: Add IP address of knode1 host to /etc/hosts
+    lineinfile:
+      dest: /etc/hosts
+      line: "192.168.50.11 knode1.vagrant.local knode1"
+      state: present
+
+  - name: Install packages that allow apt to be used over HTTPS
+    apt:
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+
+  - name: Add an apt signing key for Docker
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+
+  - name: Add apt repository for stable version
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
+      state: present
+
+  - name: Install docker and its dependecies
+    apt: 
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io
+    notify:
+      - docker status
+
+  - name: Add vagrant user to docker group
+    user:
+      name: vagrant
+      group: docker
+
+###
+
+  # - name: Remove swapfile from /etc/fstab
+  #   mount:
+  #     name: "{{ item }}"
+  #     fstype: swap
+  #     state: absent
+  #   with_items:
+  #     - swap
+  #     - none
+
+  # - name: Disable swap
+  #   command: swapoff -a
+  #   when: ansible_swaptotal_mb > 0
+
+###
+
+  - name: Add an apt signing key for Kubernetes
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+
+  - name: Adding apt repository for Kubernetes
+    apt_repository:
+      repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+      filename: kubernetes.list
+
+  - name: Install Kubernetes binaries
+    apt: 
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+        - kubelet 
+        - kubeadm 
+        - kubectl
+
+  # kubeadm join 192.168.50.10:6443 --token o26cyn.8w7qqjxrh6hfrera --discovery-token-ca-cert-hash sha256:7bf062bb16ee52fb1195ed984bd5476ca98fbcb3010e49318d2e269f5eeb1bc1
+
+  # - name: Configure node ip
+  #   lineinfile:
+  #     path: /etc/default/kubelet
+  #     line: KUBELET_EXTRA_ARGS=--node-ip={{ node_ip }}
+
+  # - name: Restart kubelet
+  #   service:
+  #     name: kubelet
+  #     daemon_reload: yes
+  #     state: restarted
+
+  # add in /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+  # Environment="cgroup-driver=systemd/cgroup-driver=cgroupfs"
+
+###
+
+  # - name: Initialize the Kubernetes cluster using kubeadm
+  #   command: kubeadm init --apiserver-advertise-address="192.168.50.10" --apiserver-cert-extra-sans="192.168.50.10"  --node-name k8s-master --pod-network-cidr=192.168.0.0/16
+
+###
+
+  # - name: Copy the join command to server location
+  #   copy: src=join-command dest=/tmp/join-command.sh mode=0777
+
+  # - name: Join the node to cluster
+  #   command: sh /tmp/join-command.sh
+
+###
+
+  handlers:
+    - name: docker status
+      service: name=docker state=started
+

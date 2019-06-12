@@ -18,7 +18,7 @@
   debconf: name='mysql-apt-config' question='mysql-apt-config/select-product' value='Ok' vtype='select'
 
 - name: add mysql-apt-config from oracle
-  apt: deb=https://dev.mysql.com/get/mysql-apt-config_0.8.10-1_all.deb
+  apt: deb=https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb
 
 - name: add apt repository for webmin
   apt_repository: repo='deb http://download.webmin.com/download/repository sarge contrib' filename='webmin' state=present update_cache=yes

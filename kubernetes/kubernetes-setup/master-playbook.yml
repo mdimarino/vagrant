@@ -1,0 +1,117 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Add IP address of kmaster host to /etc/hosts
+    lineinfile:
+      dest: /etc/hosts
+      line: "192.168.50.10 kmaster.vagrant.local kmaster"
+      state: present
+
+  - name: Add IP address of knode1 host to /etc/hosts
+    lineinfile:
+      dest: /etc/hosts
+      line: "192.168.50.11 knode1.vagrant.local knode1"
+      state: present
+
+  - name: Install packages that allow apt to be used over HTTPS
+    apt:
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+
+  - name: Add an apt signing key for Docker
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+
+  - name: Add apt repository for stable version
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
+      state: present
+
+  - name: Install docker and its dependecies
+    apt: 
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io
+    notify:
+      - docker status
+
+  - name: Add vagrant user to docker group
+    user:
+      name: vagrant
+      group: docker
+
+  - name: Add an apt signing key for Kubernetes
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+
+  - name: Adding apt repository for Kubernetes
+    apt_repository:
+      repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+      filename: kubernetes.list
+
+  - name: Install Kubernetes binaries
+    apt: 
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+        - kubelet 
+        - kubeadm 
+        - kubectl
+
+  # add in /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+  # Environment="cgroup-driver=systemd/cgroup-driver=cgroupfs"
+
+###
+
+  # - name: Initialize the Kubernetes cluster using kubeadm
+  #   command: kubeadm init --apiserver-advertise-address=192.168.50.10 --pod-network-cidr=192.168.0.0/16
+
+###
+
+  # mkdir -p $HOME/.kube
+  # sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  # sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+###
+
+  # - name: Install calico pod network
+  #   become: false
+  #   command: kubectl apply -f https://docs.projectcalico.org/v3.7/manifests/calico.yaml
+
+###
+
+  # - name: Generate join command
+  #   command: kubeadm token create --print-join-command
+  #   register: join_command
+
+  # - name: Copy join command to local file
+  #   become: false
+  #   local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
+
+  # kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/aio/deploy/recommended/kubernetes-dashboard.yaml
+
+###
+
+  handlers:
+    - name: docker status
+      service: name=docker state=started
+

@@ -12,8 +12,8 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  # config.vm.box = "ubuntu/trusty64"
-  config.vm.box = "bento/ubuntu-16.04"
+  # config.vm.box = "ubuntu/bionic64"
+  config.vm.box = "bento/ubuntu-18.04"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -70,39 +70,29 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get install -y apache2
   # SHELL
 
-  N = 1
-  (1..N).each do |instance_id|
-    config.vm.define "ubuntu-xenial64-#{instance_id}" do |instance|
-      instance.vm.hostname = "ubuntu-xenial64-#{instance_id}.vagrant.local"
-      instance.vm.network "private_network", ip: "192.168.56.20#{instance_id}"
+  config.vm.define "minikube" do |instance|
 
-      instance.vm.provider "virtualbox" do |vb|
-        # Display the VirtualBox GUI when booting the machine
-        # vb.gui = true
+    instance.vm.hostname = "minikube.vagrant.local"
+    instance.vm.network "private_network", ip: "192.168.56.201"
+    
+    instance.vm.provider "virtualbox" do |vb|
 
-        # Customize the amount of memory on the VM:
-        vb.memory = "4096"
-        vb.cpus = 2
+      # Display the VirtualBox GUI when booting the machine
+      # vb.gui = true
+      # Customize the amount of memory on the VM:
+      vb.memory = 10240
+      vb.cpus = 4
+      vb.customize ["modifyvm", :id, "--audio", "none"]
 
-        vb.customize ["modifyvm", :id, "--audio", "none"]
-      end
-
-      # Only execute once the Ansible provisioner,
-      # when all the machines are up and ready.
-      if instance_id == N
-        instance.vm.provision :ansible do |ansible|
-          # Disable default limit to connect to all the machines
-          ansible.limit = "all"
-          ansible.playbook = "provisioning/site.yml"
-          # ansible.groups = {
-          #   "masters" => ["ubuntu-xenial64-1", "ubuntu-xenial64-2"],
-          #   "slaves" => ["ubuntu-xenial64-3", "ubuntu-xenial64-4", "ubuntu-xenial64-5", "ubuntu-xenial64-6"],
-          #   "all_groups:children" => ["masters", "slaves"],
-          # }
-          # ansible.verbose = "v"
-        end
-      end
     end
+
+    instance.vm.provision :ansible do |ansible|
+
+      ansible.playbook = "provisioning/site.yml"
+      # ansible.verbose = "v"
+
+    end
+
   end
 
 end
