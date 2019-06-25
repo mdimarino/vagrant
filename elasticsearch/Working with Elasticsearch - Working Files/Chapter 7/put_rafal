@@ -1,5 +1,0 @@
-curl -XPUT localhost:9200/rafal -d '{
- "number_of_shards": 2,
- "number_of_replicas": 0,
- "index.routing.allocation.include.user": "rafal"
-}'

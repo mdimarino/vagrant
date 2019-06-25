@@ -1,0 +1,41 @@
+---
+# tasks file for kubernetes_masters
+
+###
+
+- name: Initialize the Kubernetes cluster using kubeadm
+  shell: kubeadm init --apiserver-advertise-address=192.168.56.221 --pod-network-cidr=192.168.0.0/16
+
+###
+
+- name: Create a directory if it does not exist
+  file: path=/home/vagrant/.kube state=directory mode=0755
+
+- name: Copy /etc/kubernetes/admin.conf file on the remote
+  copy: src=/etc/kubernetes/admin.conf dest=/home/vagrant/.kube/config remote_src=yes
+
+- name: Change permissions
+  file: dest=/home/vagrant/.kube owner=vagrant group=vagrant recurse=yes
+
+###
+
+- name: Install calico pod network
+  become: false
+  command: kubectl apply -f https://docs.projectcalico.org/v3.7/manifests/calico.yaml
+
+###
+
+- name: Install dashboard at master
+  become: false
+  command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/aio/deploy/recommended/kubernetes-dashboard.yaml
+
+##
+
+- name: Generate join command
+  become: false
+  shell: kubeadm token create --print-join-command
+  register: join_command
+
+- name: Copy join command to local file
+  become: false
+  local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"

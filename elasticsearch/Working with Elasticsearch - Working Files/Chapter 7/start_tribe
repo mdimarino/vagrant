@@ -1,1 +1,0 @@
-/opt/elasticsearch-2.0.0/bin/elasticsearch --node.name tribe01 --tribe.ar.cluster.name argentina --tribe.ao.cluster.name angola

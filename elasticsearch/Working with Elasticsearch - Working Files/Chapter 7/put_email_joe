@@ -1,4 +1,0 @@
-curl -XPUT localhost:9200/users/emails/2?routing=joe -d '{
-  "user": "joe",
-  "text": "hello world"
-}'

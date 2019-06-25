@@ -2,10 +2,7 @@
 # tasks file for redis-slave
 
 - name: install packages
-  apt: name={{ item }} state=present autoremove=yes
-  with_items:
-    - redis-server
-    - redis-tools
+  apt: name=['redis-server', 'redis-tools'] state=present autoremove=yes
 
 - name: set redis slave configuration
   copy: src=redis.conf dest=/etc/redis/redis.conf owner=root group=root mode=0644

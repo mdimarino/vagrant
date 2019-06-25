@@ -1,4 +1,0 @@
-curl -XPUT localhost:9200/users -d '{
- "number_of_shards": 2,
- "number_of_replicas": 0
-}'

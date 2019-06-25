@@ -73,9 +73,10 @@ Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |v|
     v.memory = 2048
     v.cpus = 2
+    v.customize ["modifyvm", :id, "--audio", "none"]
   end
 
-  N = 2
+  N = 3
   (1..N).each do |instance_id|
     config.vm.define "k#{instance_id}" do |instance|
 
@@ -91,7 +92,7 @@ Vagrant.configure("2") do |config|
           ansible.playbook = "provisioning/site.yml"
           ansible.groups = {
             "kubernetes_masters" => ["k1"],
-            "kubernetes_nodes" => ["k2"],
+            "kubernetes_nodes" => ["k2", "k3"],
             "all_groups:children" => ["kubernetes_masters", "kubernetes_nodes"],
           }
           # ansible.verbose = "v"

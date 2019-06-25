@@ -1,3 +1,0 @@
-curl -s -XPUT localhost:9200/videosearch2/_settings -d '{
-  "number_of_replicas": 1
-}'

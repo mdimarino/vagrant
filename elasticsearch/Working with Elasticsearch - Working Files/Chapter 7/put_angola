@@ -1,1 +1,0 @@
-curl -XPUT localhost:9202/angola_users/users/1 -d '{"name": "Leila"}'

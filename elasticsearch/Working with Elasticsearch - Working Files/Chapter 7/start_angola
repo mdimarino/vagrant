@@ -1,1 +1,0 @@
-/opt/elasticsearch-2.0.0/bin/elasticsearch --cluster.name angola --node.name angola01 --http.port 9202 --transport.tcp.port 9302

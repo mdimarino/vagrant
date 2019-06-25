@@ -1,3 +1,0 @@
-curl -XPUT localhost:9200/joe,jane/_settings -d '{
- "index.routing.allocation.exclude.user": "rafal"
-}'

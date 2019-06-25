@@ -6,19 +6,19 @@
 # only after all instances are created
 
 - name: apply common configuration to all nodes
-  hosts: all_groups
+  hosts: all
   become: true
   roles:
   - common
 
 - name: setup redis-master
-  hosts: redis-master
+  hosts: redis_master
   become: true
   roles:
   - redis-master
 
-- name: setup redis-slave
-  hosts: redis-slaves
-  become: true
-  roles:
-  - redis-slave
+# - name: setup redis-slave
+#   hosts: redis-slaves
+#   become: true
+#   roles:
+#   - redis-slave

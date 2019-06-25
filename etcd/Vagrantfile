@@ -12,6 +12,7 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
+  # config.vm.box = "ubuntu/bionic64"
   config.vm.box = "bento/ubuntu-18.04"
 
   # Disable automatic box update checking. If you disable this, then
@@ -69,28 +70,29 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get install -y apache2
   # SHELL
 
-  N = 1
-  (1..N).each do |instance_id|
-    config.vm.define "redis0#{instance_id}" do |instance|
-      instance.vm.hostname = "redis0#{instance_id}.vagrant.local"
-      instance.vm.network "private_network", ip: "192.168.56.3#{instance_id}"
+  config.vm.define "ubuntu-bionic64" do |instance|
 
-      # Only execute once the Ansible provisioner,
-      # when all the machines are up and ready.
-      if instance_id == N
-        instance.vm.provision :ansible do |ansible|
-          # Disable default limit to connect to all the machines
-          ansible.limit = "all"
-          ansible.playbook = "provisioning/site.yml"
-          ansible.groups = {
-            "redis_master" => ["redis01"],
-            "redis_slaves" => ["redis02", "redis03"],
-            "all_groups:children" => ["redis-master", "redis-slaves"],
-          }
-        end
-      end
+    instance.vm.hostname = "etcd.vagrant.local"
+    instance.vm.network "private_network", ip: "192.168.56.21"
+    
+    instance.vm.provider "virtualbox" do |vb|
+
+      # Display the VirtualBox GUI when booting the machine
+      # vb.gui = true
+      # Customize the amount of memory on the VM:
+      vb.cpus = 1
+      vb.memory = "1024"
+      vb.customize ["modifyvm", :id, "--audio", "none"]
 
     end
+
+    instance.vm.provision :ansible do |ansible|
+
+      ansible.playbook = "provisioning/site.yml"
+      # ansible.verbose = "v"
+
+    end
+
   end
 
 end

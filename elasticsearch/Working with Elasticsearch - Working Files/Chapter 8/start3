@@ -1,1 +1,0 @@
-/opt/elasticsearch-2.0.0/bin/elasticsearch --node.name elasticsearch3 --node.rack b

@@ -1,1 +1,0 @@
-/opt/elasticsearch-2.0.0/bin/elasticsearch --node.name argentina01 --cluster.name argentina --http.port 9201 --transport.tcp.port 9301
