@@ -1,0 +1,14 @@
+---
+# tasks file for gitlab-runner
+
+- name: download GitLab repository installation script
+  get_url:
+    url: "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh"
+    dest: /tmp/gitlab_install_repository.sh
+    validate_certs: True
+
+- name: install GitLab repository
+  command: /bin/bash /tmp/gitlab_install_repository.sh
+
+- name: install GitLab Runner
+  apt: name=gitlab-runner state=present update_cache=yes
