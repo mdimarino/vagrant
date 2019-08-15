@@ -8,7 +8,7 @@
 
   tasks:
   - name: install python 2
-    raw: test -e /usr/bin/python || (apt update -y && apt install python-minimal -y)
+    raw: test -e /usr/bin/python || (apt update -y && apt install python-minimal python-apt -y)
 
 - name: apply common configuration to all nodes
   hosts: all

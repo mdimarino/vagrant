@@ -5,10 +5,10 @@
   copy: src=01proxy dest=/etc/apt/apt.conf.d/01proxy owner=root group=root mode=0644
 
 - name: add stretch-backports repository
-  apt_repository: repo="deb http://ftp.debian.org/debian stretch-backports main" state=present
+  apt_repository: repo="deb http://ftp.debian.org/debian buster-backports main" state=present
 
-- name: update apt cache and install package reboot-notifier using default release stretch-backport
-  apt: name=reboot-notifier state=latest default_release=stretch-backports update_cache=yes cache_valid_time=3600
+- name: update apt cache and install package reboot-notifier using default release buster-backport
+  apt: name=reboot-notifier state=latest default_release=buster-backports update_cache=yes cache_valid_time=3600
 
 - name: set timezone to America/Sao_Paulo
   timezone: name=America/Sao_Paulo
