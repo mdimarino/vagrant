@@ -1,6 +1,13 @@
 ---
 # tasks file for common
 
+- name: Add IP address of all hosts to all hosts
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ hostvars[item].ansible_eth1.ipv4.address }} {{ hostvars[item].ansible_fqdn }} {{ hostvars[item].ansible_hostname }}"
+    state: present
+  with_items: "{{ groups.all }}"
+
 - name: enable epel repository
   yum: name=epel-release state=present
 
@@ -19,8 +26,8 @@
 - name: set timezone to America/Sao_Paulo
   timezone: name=America/Sao_Paulo
 
-- name: generate pt_BR.UTF-8 locales
-  locale_gen: name=pt_BR.UTF-8 state=present
+# - name: generate pt_BR.UTF-8 locales
+#   locale_gen: name=pt_BR.UTF-8 state=present
 
 - name: change .bash_profile file for user root
   copy: src=.bash_profile.root dest=/root/.bash_profile owner=root group=root mode=0644 backup=yes
