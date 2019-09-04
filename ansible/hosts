@@ -1,5 +1,0 @@
-192.168.56.230 controller.vagrant.local controller
-192.168.56.231 web1.vagrant.local web1
-192.168.56.232 web2.vagrant.local web2
-192.168.56.233 web3.vagrant.local web3
-192.168.56.234 db.vagrant.local db

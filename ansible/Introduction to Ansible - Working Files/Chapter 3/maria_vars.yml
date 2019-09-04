@@ -1,3 +1,0 @@
----
-mysql_port: 3306
-log_path: "/var/log"

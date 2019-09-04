@@ -1,9 +1,0 @@
----
-- name: Install python bindings for SE Linux
-  yum: name={{ item }} state=present
-  with_items:
-   - libselinux-python
-   - libsemanage-python
-   
-- name: test to see if selinux is running
-  command: getenforce

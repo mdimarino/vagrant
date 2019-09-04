@@ -1,9 +1,0 @@
----
-- name: deploy common and mariadb role
-  hosts: testServer
-  remote_user: ec2-user
-  become: yes 
-
-  roles:
-  - common
-  - mariadb 
