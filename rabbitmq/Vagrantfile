@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  #config.vm.box = "ubuntu/bionic64"
+  # config.vm.box = "ubuntu/bionic64"
   config.vm.box = "bento/ubuntu-18.04"
 
   # Disable automatic box update checking. If you disable this, then
@@ -70,10 +70,10 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get install -y apache2
   # SHELL
 
-  config.vm.define "ubuntu-bionic64" do |instance|
+  config.vm.define "rabbitmq" do |instance|
 
-    instance.vm.hostname = "ubuntu-bionic64.vagrant.local"
-    instance.vm.network "private_network", ip: "192.168.56.201"
+    instance.vm.hostname = "rabbitmq.vagrant.local"
+    instance.vm.network "private_network", ip: "192.168.56.21"
     
     instance.vm.provider "virtualbox" do |vb|
 

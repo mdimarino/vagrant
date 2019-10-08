@@ -1,5 +1,0 @@
-node 'agent' {
-
-    include cacti
-
-}

@@ -1,6 +1,0 @@
-192.168.56.111 puppetmaster.vagrant.local puppetmaster puppet
-192.168.56.112 prod-app01.vagrant.local prod-app01
-192.168.56.113 prod-db01.vagrant.local prod-db01
-192.168.56.114 dev-app01.vagrant.local dev-app01
-192.168.56.115 dev-db01.vagrant.local dev-db01
-192.168.56.115 agent.vagrant.local agent

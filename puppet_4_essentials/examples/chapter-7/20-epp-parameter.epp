@@ -1,4 +1,0 @@
-<%- | String $local_variable,
-    Array $local_array
-  | -%>
-Now the template starts....

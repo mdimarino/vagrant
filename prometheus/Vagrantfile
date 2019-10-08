@@ -12,7 +12,6 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  #config.vm.box = "ubuntu/bionic64"
   config.vm.box = "bento/ubuntu-18.04"
 
   # Disable automatic box update checking. If you disable this, then
@@ -70,26 +69,25 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get install -y apache2
   # SHELL
 
-  config.vm.define "ubuntu-bionic64" do |instance|
+  config.vm.define "prometheus", primary: true do |instance|
 
-    instance.vm.hostname = "ubuntu-bionic64.vagrant.local"
-    instance.vm.network "private_network", ip: "192.168.56.201"
-    
-    instance.vm.provider "virtualbox" do |vb|
+    instance.vm.hostname = "prometheus.vagrant.local"
 
-      # Display the VirtualBox GUI when booting the machine
-      # vb.gui = true
-      # Customize the amount of memory on the VM:
-      vb.memory = "4096"
-      vb.customize ["modifyvm", :id, "--audio", "none"]
+    instance.vm.network "private_network", ip: "192.168.56.211"
 
-    end
+  #  instance.vm.provider "virtualbox" do |vb|
+  #   # Display the VirtualBox GUI when booting the machine
+  #   vb.gui = true
+  #
+  #   # Customize the amount of memory on the VM:
+  #   vb.memory = "2048"
+  #  end
+
+  #  instance.vm.provision "shell", path: "bootstrap.sh"
 
     instance.vm.provision :ansible do |ansible|
-
       ansible.playbook = "provisioning/site.yml"
       # ansible.verbose = "v"
-
     end
 
   end

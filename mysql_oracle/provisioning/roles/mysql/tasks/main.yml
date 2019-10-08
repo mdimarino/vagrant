@@ -11,8 +11,8 @@
 - name: add apt key for webmin
   apt_key: url=http://www.webmin.com/jcameron-key.asc state=present
 
-- name: set mysql version
-  debconf: name='mysql-apt-config' question='mysql-apt-config/select-server' value='mysql-5.7' vtype='select'
+  #- name: set mysql version
+  #debconf: name='mysql-apt-config' question='mysql-apt-config/select-server' value='mysql-5.7' vtype='select'
 
 - name: set confirm mysql options
   debconf: name='mysql-apt-config' question='mysql-apt-config/select-product' value='Ok' vtype='select'

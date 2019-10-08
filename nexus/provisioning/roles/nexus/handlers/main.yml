@@ -1,0 +1,8 @@
+---
+# handlers file for nexus
+
+- name: restart nexus
+  systemd: name=nexus state=restarted enabled=yes daemon_reload=yes
+
+- name: restart nginx
+  systemd: name=nginx state=restarted

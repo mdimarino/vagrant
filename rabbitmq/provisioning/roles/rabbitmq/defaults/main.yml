@@ -1,0 +1,13 @@
+---
+# defaults file for rabbitmq
+
+rabbitmq_users:
+  - admin
+
+rabbitmq_administrator_tag: administrator
+
+rabbitmq_users_remove:
+  - guest
+
+rabbitmq_plugins:
+  - rabbitmq_management

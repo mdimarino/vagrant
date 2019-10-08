@@ -15,6 +15,9 @@
   with_items:
     - libselinux-python
 
+- name: set as default locale
+  command: localectl set-locale LANG=pt_BR.UTF-8 LC_ALL=pt_BR.UTF-8
+
 - name: copy /usr/share/zoneinfo/America/Sao_Paulo to /etc/localtime
   copy: src=/usr/share/zoneinfo/America/Sao_Paulo dest=/etc/localtime owner=root group=root mode=0644 backup=yes
 

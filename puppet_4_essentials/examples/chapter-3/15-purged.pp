@@ -1,3 +1,0 @@
-package { 'haproxy':
-  ensure => 'purged',
-}

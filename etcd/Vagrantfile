@@ -70,29 +70,35 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get install -y apache2
   # SHELL
 
-  config.vm.define "ubuntu-bionic64" do |instance|
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+    v.cpus = 1
+    v.customize ["modifyvm", :id, "--audio", "none"]
+  end
 
-    instance.vm.hostname = "etcd.vagrant.local"
-    instance.vm.network "private_network", ip: "192.168.56.21"
-    
-    instance.vm.provider "virtualbox" do |vb|
+  N = 3
+  (1..N).each do |instance_id|
+    config.vm.define "etcd-#{instance_id}" do |instance|
 
-      # Display the VirtualBox GUI when booting the machine
-      # vb.gui = true
-      # Customize the amount of memory on the VM:
-      vb.cpus = 1
-      vb.memory = "1024"
-      vb.customize ["modifyvm", :id, "--audio", "none"]
+      instance.vm.hostname = "etcd-#{instance_id}.vagrant.local"
+      instance.vm.network "private_network", ip: "192.168.56.2#{instance_id}"
 
+      # Only execute once the Ansible provisioner,
+      # when all the machines are up and ready.
+      if instance_id == N
+        instance.vm.provision :ansible do |ansible|
+          # Disable default limit to connect to all the machines
+          ansible.limit = "all"
+          ansible.playbook = "provisioning/site.yml"
+          # ansible.groups = {
+          #   "kubernetes_masters" => ["k1"],
+          #   "kubernetes_nodes" => ["k2", "k3"],
+          #   "all_groups:children" => ["kubernetes_masters", "kubernetes_nodes"],
+          # }
+          # ansible.verbose = "v"
+        end
+      end
     end
-
-    instance.vm.provision :ansible do |ansible|
-
-      ansible.playbook = "provisioning/site.yml"
-      # ansible.verbose = "v"
-
-    end
-
   end
 
 end

@@ -1,4 +1,0 @@
-192.168.56.10 puppet.vagrant.local puppet
-192.168.56.11 mail.vagrant.local mail
-192.168.56.12 db.vagrant.local db
-192.168.56.13 web.vagrant.local web
