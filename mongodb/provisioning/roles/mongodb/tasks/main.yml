@@ -5,7 +5,6 @@
   lineinfile:
     dest: /etc/hosts
     line: "{{ hostvars[item].ansible_facts.all_ipv4_addresses[1] }} {{ hostvars[item].ansible_fqdn }} {{ hostvars[item].ansible_hostname }}"
-    # line: "{{ hostvars[item].ansible_facts.ansible_eth1.ipv4.address }} {{ hostvars[item].ansible_fqdn }} {{ hostvars[item].ansible_hostname }}"
     state: present
   with_items: "{{ groups.all }}"
 

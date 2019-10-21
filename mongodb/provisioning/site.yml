@@ -7,10 +7,18 @@
 
   roles:
   - common
-
-- name: apply mongodb role
-  hosts: all
-  become: true
-
-  roles:
   - mongodb
+
+# - name: apply configuration to mongodb_masters
+#   hosts: mongodb_masters
+#   become: true
+
+#   roles:
+#   - mongodb_masters
+
+# - name: apply configuration to mongodb_slaves
+#   hosts: mongodb_slaves
+#   become: true
+
+#   roles:
+#   - mongodb_slaves
