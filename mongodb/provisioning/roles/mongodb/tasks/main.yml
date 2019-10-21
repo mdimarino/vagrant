@@ -1,29 +1,29 @@
 ---
 # tasks file for mongodb
 
-# - name: add apt repository mongodb
-#   apt_key: keyserver=hkp://keyserver.ubuntu.com:80 id=EA312927 state=present
+- name: add IP address of all hosts to all hosts
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ hostvars[item].ansible_facts.all_ipv4_addresses[1] }} {{ hostvars[item].ansible_fqdn }} {{ hostvars[item].ansible_hostname }}"
+    # line: "{{ hostvars[item].ansible_facts.ansible_eth1.ipv4.address }} {{ hostvars[item].ansible_fqdn }} {{ hostvars[item].ansible_hostname }}"
+    state: present
+  with_items: "{{ groups.all }}"
 
-# - name: add apt repository for mongodb
-#   apt_repository: repo='deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 multiverse' filename='mongodb-org-3.2' state=present
-
-- name: ensure /etc/hosts has mongodb1.vagrant.local entry
-  lineinfile: dest=/etc/hosts regexp='mongodb1.vagrant.local' line='192.168.56.131 mongodb1.vagrant.local mongodb1' owner=root group=root mode=0644
-
-- name: ensure /etc/hosts has mongodb2.vagrant.local entry
-  lineinfile: dest=/etc/hosts regexp='mongodb2.vagrant.local' line='192.168.56.132 mongodb2.vagrant.local mongodb2' owner=root group=root mode=0644
-
-- name: ensure /etc/hosts has mongodb3.vagrant.local entry
-  lineinfile: dest=/etc/hosts regexp='mongodb3.vagrant.local' line='192.168.56.133 mongodb3.vagrant.local mongodb3' owner=root group=root mode=0644
+- name: add apt key
+  apt_key: url=https://www.mongodb.org/static/pgp/server-4.2.asc state=present
+    
+- name: add apt repository for mongodb
+  apt_repository: repo='deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse' filename='mongodb-org-4.2' state=present
 
 - name: install packages
-  apt: name={{ item }} state=present autoremove=yes
-  with_items:
-    - mongodb
-  notify:
-    - restart mongodb
-    - create mongodb replica set
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - mongodb-org
 
-- name: set /etc/mongodb.conf
-  copy: src=mongodb.conf dest=/etc/mongodb.conf owner=root group=root mode=0644 backup=yes
+- name: set /etc/mongod.conf
+  copy: src=mongod.conf dest=/etc/mongod.conf owner=root group=root mode=0644 backup=yes
   notify: restart mongodb
+
+- name: start mongodb
+  systemd: state=started enabled=yes daemon_reload=yes name=mongod

@@ -1,0 +1,38 @@
+image: ubuntu:18.04
+
+variables:
+  # This will suppress any download for dependencies and plugins or upload messages which would clutter the console log.
+  # `showDateTime` will show the passed time in milliseconds. You need to specify `--batch-mode` to make this work.
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  # As of Maven 3.3.0 instead of this you may define these options in `.mvn/maven.config` so the same config is used
+  # when running from the command line.
+  # `installAtEnd` and `deployAtEnd` are only effective with recent version of the corresponding plugins.
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+
+cache:
+  paths:
+    - .m2/repository
+
+services:
+- docker:dind
+
+before_script:
+    - apt-get update
+    - apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+    - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+    - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    - apt-get update
+    - apt-get install -y docker-ce docker-ce-cli containerd.io
+    - service docker start
+    - docker info
+
+tarefa1:
+    script:
+    - echo "Configurando apt cache e atualizando"
+    - echo 'Acquire::http::Proxy "http://192.168.56.253:3142";' > /etc/apt/apt.conf.d/01proxy
+    - apt-get update
+    - echo "Instalando dependências"
+    - apt-get install -y openjdk-8-jdk-headless
+    - apt-get install -y maven
+    - echo "Compilando o projeto"
+    - mvn compile
