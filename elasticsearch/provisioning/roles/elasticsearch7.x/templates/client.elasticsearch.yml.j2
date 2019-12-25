@@ -23,6 +23,9 @@ cluster.name: {{ cluster_name }}
 #
 #node.name: node-1
 node.name: {{ inventory_hostname }}
+node.master: false
+node.data: false
+node.ingest: true
 #
 # Add custom attributes to the node:
 #
@@ -66,18 +69,18 @@ network.publish_host: _eth1:ipv4_
 #
 # --------------------------------- Discovery ----------------------------------
 #
-# Pass an initial list of hosts to perform discovery when new node is started:
+# Pass an initial list of hosts to perform discovery when this node is started:
 # The default list of hosts is ["127.0.0.1", "[::1]"]
 #
-#discovery.zen.ping.unicast.hosts: ["host1", "host2"]
-discovery.zen.ping.unicast.hosts: ["master-data1", "master-data2", "master-data3"]
+#discovery.seed_hosts: ["host1", "host2"]
+discovery.seed_hosts: ["192.168.56.81", "192.168.56.82", "192.168.56.83"]
 #
-# Prevent the "split brain" by configuring the majority of nodes (total number of master-eligible nodes / 2 + 1):
+# Bootstrap the cluster using an initial set of master-eligible nodes:
 #
-#discovery.zen.minimum_master_nodes:
-discovery.zen.minimum_master_nodes: 3
+#cluster.initial_master_nodes: ["node-1", "node-2"]
+#cluster.initial_master_nodes: ["192.168.56.81", "192.168.56.82", "192.168.56.83"]
 #
-# For more information, consult the zen discovery module documentation.
+# For more information, consult the discovery and cluster formation module documentation.
 #
 # ---------------------------------- Gateway -----------------------------------
 #
@@ -92,9 +95,3 @@ discovery.zen.minimum_master_nodes: 3
 # Require explicit names when deleting indices:
 #
 #action.destructive_requires_name: true
-
-node.master: false
-node.data: false
-node.ingest: true
-http.enabled: true
-discovery.zen.ping_timeout: 5s

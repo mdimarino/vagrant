@@ -112,7 +112,7 @@ Vagrant.configure("2") do |config|
           ansible.playbook = "provisioning/site.yml"
           ansible.groups = {
             "master-data-group" => ["master-data1", "master-data2", "master-data3"],
-            "ingest-group" => ["ingest"],
+            "ingest-group" => ["ingest1"],
             "all-groups:children" => ["master-data", "ingest"],
           }
           # ansible.verbose = "v"
