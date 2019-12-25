@@ -1,0 +1,59 @@
+---
+# tasks file for docker-swarm
+
+- name: Add IP address of all hosts to all hosts
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ hostvars[item]['ansible_eth1']['ipv4']['address'] }} {{ hostvars[item].ansible_fqdn }} {{ hostvars[item].ansible_hostname }}"
+    state: present
+  with_items: "{{ groups.all }}"
+
+- name: install python-docker package
+  apt: name=python-docker state=present
+
+- name: init docker swarm at manager nodes
+  docker_swarm:
+    advertise_addr: eth1:2377
+    state: present
+  register: docker_swarm_init
+  when: inventory_hostname in groups.docker_swarm_managers
+
+# - name: debug docker_swarm_init
+#   debug:
+#     var: docker_swarm_init
+#   when: inventory_hostname in groups.docker_swarm_managers
+
+# - name: set fact join_token_worker
+#   set_fact:
+#     join_token_worker: "{{ docker_swarm_init.swarm_facts.JoinTokens.Worker }}"
+#   when: inventory_hostname in groups.docker_swarm_managers
+
+# - name: debug join_token_worker
+#   debug:
+#     var: hostvars[groups['docker_swarm_managers'][0]]['join_token_worker']
+
+# - name: debug docker_swarm_managers
+#   debug:
+#     var: hostvars[groups['docker_swarm_managers'][0]]
+
+# - name: set fact manager_status_addr
+#   set_fact:
+#     manager_status_addr: "{{ docker_swarm_managers_info.nodes[].ManagerStatus.Addr }}"
+#   when: inventory_hostname in groups.docker_swarm_managers
+
+# - name: debug manager_status_addr
+#   debug:
+#     var: hostvars[groups['docker_swarm_managers'][0]]['manager_status_addr']
+
+# - name: debug docker_swarm_managers_info
+#   debug:
+#     var: docker_swarm_managers_info.nodes[0].ManagerStatus.Addr
+#   when: inventory_hostname in groups.docker_swarm_managers
+
+# - name: join workers to docker swarm cluster
+#   docker_swarm:
+#     remote_addrs: [ '192.168.56.81:2377' ] 
+#     advertise_addr: eth1:2377
+#     join_token: hostvars[groups['docker_swarm_managers'][0]]['join_token_worker']
+#     state: join
+#   when: inventory_hostname in groups.docker_swarm_workers
