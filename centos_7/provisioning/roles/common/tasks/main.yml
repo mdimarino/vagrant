@@ -29,8 +29,8 @@
 # - name: generate pt_BR.UTF-8 locales
 #   locale_gen: name=pt_BR.UTF-8 state=present
 
-- name: set as default locale
-  command: localectl set-locale LANG=pt_BR.UTF-8 LC_ALL=pt_BR.UTF-8
+- name: set pt_BR.UTF-8 as default locale
+  command: localectl set-locale LANG=pt_BR.UTF-8
 
 - name: change .bash_profile file for user root
   copy: src=.bash_profile.root dest=/root/.bash_profile owner=root group=root mode=0644 backup=yes
