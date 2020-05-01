@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
   #   apt-get install -y apache2
   # SHELL
 
-  N = 4
+  N = 1
   (1..N).each do |instance_id|
     config.vm.define "centos7-#{instance_id}" do |instance|
       instance.vm.hostname = "centos7-#{instance_id}.vagrant.local"

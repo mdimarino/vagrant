@@ -4,7 +4,7 @@
 - name: Add IP address of all hosts to all hosts
   lineinfile:
     dest: /etc/hosts
-    line: "{{ hostvars[item].ansible_facts.all_ipv4_addresses[1] }} {{ hostvars[item].ansible_fqdn }} {{ hostvars[item].ansible_hostname }}"
+    line: "{{ hostvars[item].ansible_enp0s8.ipv4.address }} {{ hostvars[item].ansible_fqdn }} {{ hostvars[item].ansible_hostname }}"
     state: present
   with_items: "{{ groups.all }}"
 
@@ -18,7 +18,7 @@
     - apt-transport-https
     - ca-certificates
     - curl
-    - gnupg-agent
+    - gnupg2
     - software-properties-common
 
 - name: Add an apt signing key for Docker
@@ -28,7 +28,7 @@
 
 - name: Add apt repository for stable version
   apt_repository:
-    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
     state: present
 
 - name: Install docker and its dependecies
@@ -41,8 +41,14 @@
     - docker-ce 
     - docker-ce-cli 
     - containerd.io
+
+- name: Copy daemon.json to /etc/docker
+  copy: 
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+    mode: 0644
   notify:
-    - docker status
+    - restart docker
 
 - name: Add vagrant user to docker group
   user:
@@ -70,10 +76,3 @@
       - kubelet 
       - kubeadm 
       - kubectl
-
-- name: Ensure we have cgroup-driver set under /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-  lineinfile:
-    path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-    regexp: 'Environment="cgroup-driver='
-    insertafter: '^EnvironmentFile=-/etc/default/kubelet'
-    line: 'Environment="cgroup-driver=systemd/cgroup-driver=cgroupfs"'

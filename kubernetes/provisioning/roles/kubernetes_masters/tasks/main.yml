@@ -4,8 +4,7 @@
 ###
 
 - name: Initialize the Kubernetes cluster using kubeadm
-  shell: kubeadm init --apiserver-advertise-address=192.168.56.221 --pod-network-cidr=192.168.0.0/16
-
+  shell: kubeadm init --apiserver-advertise-address={{ ansible_enp0s8.ipv4.address }} --apiserver-cert-extra-sans={{ ansible_enp0s8.ipv4.address }}  --node-name {{ ansible_fqdn }} --pod-network-cidr=10.244.0.0/16
 ###
 
 - name: Create a directory if it does not exist
@@ -19,9 +18,9 @@
 
 ###
 
-- name: Install calico pod network
+- name: Install flannel pod network
   become: false
-  command: kubectl apply -f https://docs.projectcalico.org/v3.7/manifests/calico.yaml
+  command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
 ###
 

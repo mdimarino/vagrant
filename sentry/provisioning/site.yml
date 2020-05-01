@@ -3,8 +3,8 @@
 
 - name: apply common configuration to all nodes
   hosts: all
-  become: true
+  become: True
 
   roles:
   - common
-  - swapfile
+  - docker
