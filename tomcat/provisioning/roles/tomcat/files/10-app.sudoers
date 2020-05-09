@@ -1,1 +1,1 @@
-www	ALL=(ALL) NOPASSWD:/usr/sbin/service tomcat *
+app	ALL=(ALL) NOPASSWD:/usr/bin/systemctl restart tomcat.service

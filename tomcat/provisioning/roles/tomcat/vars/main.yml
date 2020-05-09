@@ -1,5 +1,5 @@
 ---
 # vars file for tomcat
 
-TOMCAT_MAJOR: 8
-TOMCAT_RELEASE: 8.5.9
+TOMCAT_MAJOR: 9
+TOMCAT_RELEASE: 9.0.30
