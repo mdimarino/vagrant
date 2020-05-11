@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=forking
 
-Environment=JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre
+Environment=JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 Environment=CATALINA_PID=/opt/app/tomcat/temp/tomcat.pid
 Environment=CATALINA_HOME=/opt/app/tomcat
 Environment=CATALINA_BASE=/opt/app/tomcat
