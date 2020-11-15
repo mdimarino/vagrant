@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "ubuntu/bionic64"
+  config.vm.box = "ubuntu/focal64"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -75,15 +75,18 @@ Vagrant.configure(2) do |config|
 
     instance.vm.network "private_network", ip: "192.168.56.253"
 
-  #  instance.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
-  #   # Customize the amount of memory on the VM:
-  #   vb.memory = "2048"
-  #  end
+    instance.vm.provider "virtualbox" do |vb|
 
-  #  instance.vm.provision "shell", path: "bootstrap.sh"
+      # Display the VirtualBox GUI when booting the machine
+      # vb.gui = true
+
+      # Customize the amount of memory on the VM:
+      vb.memory = "1024"
+
+      vb.customize ["modifyvm", :id, "--audio", "none"]
+      vb.customize ["modifyvm", :id, "--uartmode1", "file", File::NULL]
+
+    end
 
     instance.vm.provision :ansible do |ansible|
       ansible.playbook = "provisioning/site.yml"

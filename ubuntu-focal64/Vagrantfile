@@ -67,4 +67,29 @@ Vagrant.configure("2") do |config|
   #   apt-get update
   #   apt-get install -y apache2
   # SHELL
+
+  config.vm.define "ubuntu-focal64" do |instance|
+
+    instance.vm.hostname = "ubuntu-focal64.vagrant.local"
+    instance.vm.network "private_network", ip: "192.168.56.201"
+  
+    instance.vm.provider "virtualbox" do |vb|
+
+      # Display the VirtualBox GUI when booting the machine
+      # vb.gui = true
+
+      # Customize the amount of memory on the VM:
+      vb.memory = "4096"
+
+      vb.customize ["modifyvm", :id, "--audio", "none"]
+      vb.customize ["modifyvm", :id, "--uartmode1", "file", File::NULL]
+
+    end
+
+    instance.vm.provision :ansible do |ansible|
+      ansible.playbook = "provisioning/site.yml"
+      # ansible.verbose = "v"
+    end
+  end
+
 end

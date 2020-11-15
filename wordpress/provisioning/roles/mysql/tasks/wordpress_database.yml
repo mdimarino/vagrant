@@ -1,7 +1,0 @@
----
-
-- name: create database wp-db under mysql
-  mysql_db: name={{ WORDPRESS_DATABASE }} state=present
-
-- name: create 'wp-app'@'192.168.56.%' user under mysql
-  mysql_user: name={{ WORDPRESS_DBUSER }} host=192.168.56.% priv={{ WORDPRESS_DATABASE }}.*:ALL password={{ WORDPRESS_DBPASS }} state=present

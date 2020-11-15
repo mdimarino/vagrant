@@ -1,8 +1,0 @@
----
-# handlers file for wordpress
-
-- name: enable blog.vagrant.local configuration under apache
-  command: /usr/sbin/a2ensite blog.vagrant.local
-
-- name: restart apache
-  service: name=apache2 state=restarted

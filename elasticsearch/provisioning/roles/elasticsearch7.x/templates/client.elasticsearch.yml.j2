@@ -26,6 +26,7 @@ node.name: {{ inventory_hostname }}
 node.master: false
 node.data: false
 node.ingest: true
+node.ml: false
 #
 # Add custom attributes to the node:
 #
@@ -59,7 +60,7 @@ path.logs: /var/log/elasticsearch
 #
 #network.host: 192.168.0.1
 network.bind_host: 0.0.0.0
-network.publish_host: _eth1:ipv4_
+network.publish_host: _enp0s8:ipv4_
 #
 # Set a custom port for HTTP:
 #

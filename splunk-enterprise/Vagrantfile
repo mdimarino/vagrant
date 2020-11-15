@@ -69,66 +69,27 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get install -y apache2
   # SHELL
 
-  # config.vm.define "jenkins", primary: true do |instance|
-  #
-  #   instance.vm.hostname = "jenkins.vagrant.local"
-  #
-  #   instance.vm.network "private_network", ip: "192.168.56.161"
-  #
-  #   instance.vm.provider "virtualbox" do |vb|
-  #     # Display the VirtualBox GUI when booting the machine
-  #     # vb.gui = true
-  #
-  #     # Customize the amount of memory on the VM:
-  #     # vb.memory = "2048"
-  #
-  #     vb.customize ["modifyvm", :id, "--audio", "none"]
-  #   end
-  #
-  #   # instance.vm.provision "shell", path: "bootstrap.sh"
-  #
-  #   instance.vm.provision :ansible do |ansible|
-  #     ansible.playbook = "provisioning/site.yml"
-  #     # ansible.verbose = "v"
-  #   end
-  #
-  # end
+  config.vm.define "splunk-enterprise", primary: true do |instance|
 
-  N = 3
-  (1..N).each do |instance_id|
-    config.vm.define "jenkins0#{instance_id}" do |instance|
-      instance.vm.hostname = "jenkins0#{instance_id}.vagrant.local"
-      instance.vm.network "private_network", ip: "192.168.56.16#{instance_id}"
+    instance.vm.hostname = "splunk-enterprise.vagrant.local"
+    instance.vm.network "private_network", ip: "192.168.56.221"
 
-      instance.vm.provider "virtualbox" do |vb|
+    instance.vm.provider "virtualbox" do |vb|
+      # Display the VirtualBox GUI when booting the machine
+      # vb.gui = true
 
-        # Display the VirtualBox GUI when booting the machine
-        # vb.gui = true
+      # Customize the amount of memory on the VM:
+      vb.memory = "4096"
 
-        # Customize the amount of memory on the VM:
-        vb.memory = "2048"
-
-        vb.customize ["modifyvm", :id, "--audio", "none"]
-        vb.customize ["modifyvm", :id, "--uartmode1", "file", File::NULL]
-
-      end
-
-      # Only execute once the Ansible provisioner,
-      # when all the machines are up and ready.
-      if instance_id == 3
-        instance.vm.provision :ansible do |ansible|
-          # Disable default limit to connect to all the machines
-          ansible.limit = "all"
-          ansible.playbook = "provisioning/site.yml"
-          ansible.groups = {
-            "jenkins_masters" => ["jenkins01"],
-            "jenkins_slaves" => ["jenkins02", "jenkins03"],
-            "all_groups:children" => ["jenkins_masters", "jenkins_slaves"],
-          }
-          # ansible.verbose = "v"
-        end
-      end
+      vb.customize ["modifyvm", :id, "--audio", "none"]
+      vb.customize ["modifyvm", :id, "--uartmode1", "file", File::NULL]
     end
+
+    instance.vm.provision :ansible do |ansible|
+      ansible.playbook = "provisioning/site.yml"
+      # ansible.verbose = "v"
+    end
+
   end
 
 end

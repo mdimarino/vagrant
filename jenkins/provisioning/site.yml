@@ -1,33 +1,25 @@
 ---
 # This playbook deploys the whole application stack in this site.
 
-- name: install python-minimal (python 2) if not installed
-  hosts: all
-  gather_facts: False
-  become: True
-
-  tasks:
-  - name: install python 2
-    raw: test -e /usr/bin/python || (apt update -y && apt install python-minimal -y)
-
 - name: apply common configuration to all nodes
   hosts: all
   become: True
 
   roles:
   - common
+  - swapfile
   - docker
 
-- name: apply jenkins-masters configuration to jenkins masters nodes
-  hosts: jenkins-masters
+- name: apply jenkins_masters configuration to jenkins masters nodes
+  hosts: jenkins_masters
   become: True
 
   roles:
-  - jenkins-masters
+  - jenkins_masters
 
-- name: apply jenkins-slaves configuration to jenkins slaves nodes
-  hosts: jenkins-slaves
+- name: apply jenkins_slaves configuration to jenkins slaves nodes
+  hosts: jenkins_slaves
   become: True
 
   roles:
-  - jenkins-slaves
+  - jenkins_slaves
