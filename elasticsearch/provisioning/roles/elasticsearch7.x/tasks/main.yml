@@ -1,0 +1,47 @@
+---
+# tasks file for elasticsearch
+
+- name: add IP address of all hosts to all hosts
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ hostvars[item].ansible_enp0s8.ipv4.address }} {{ hostvars[item].ansible_fqdn }} {{ hostvars[item].ansible_hostname }}"
+    state: present
+  with_items: "{{ groups.all }}"
+
+- name: add apt key for elasticsearch
+  apt_key: url=https://artifacts.elastic.co/GPG-KEY-elasticsearch state=present
+
+- name: add apt repository for elasticsearch
+  apt_repository: repo='deb http://artifacts.elastic.co/packages/7.x/apt stable main' filename='elastic-7.x' state=present update_cache=yes
+
+- name: install java package
+  apt: name=openjdk-8-jdk-headless state=present
+
+- name: install elasticsearch packages
+  apt: name=elasticsearch state=present
+
+- name: change /etc/elasticsearch/elasticsearch.yml for master-data boxes
+  template: src=master-data.elasticsearch.yml.j2 dest=/etc/elasticsearch/elasticsearch.yml owner=root group=elasticsearch mode=0660 backup=yes
+  when: "'master_data_group' in group_names"
+
+- name: change /etc/elasticsearch/elasticsearch.yml for client boxes
+  template: src=client.elasticsearch.yml.j2 dest=/etc/elasticsearch/elasticsearch.yml owner=root group=elasticsearch mode=0660 backup=yes
+  when: "'ingest_group' in group_names"
+
+- name: install kibana package on client boxes
+  apt: name=kibana state=present
+  when: "'ingest_group' in group_names"
+
+- name: change /etc/kibana/kibana.yml for client boxes
+  template: src=client.kibana.yml.j2 dest=/etc/kibana/kibana.yml owner=root group=root mode=0644 backup=yes
+  when: "'ingest_group' in group_names"
+
+- name: change /etc/elasticsearch/jvm.options
+  template: src=jvm.options.j2 dest=/etc/elasticsearch/jvm.options owner=root group=elasticsearch mode=0660 backup=yes
+
+- name: start elasticsearch
+  systemd: state=started enabled=yes daemon_reload=yes name=elasticsearch
+
+- name: start kibana
+  systemd: state=started enabled=yes daemon_reload=yes name=kibana
+  when: "'ingest_group' in group_names"

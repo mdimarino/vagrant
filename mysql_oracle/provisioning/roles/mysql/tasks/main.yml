@@ -1,0 +1,66 @@
+---
+# tasks file for mysql
+
+- name: Add IP address of all hosts to all hosts
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ hostvars[item].ansible_eth1.ipv4.address }} {{ hostvars[item].ansible_fqdn }} {{ hostvars[item].ansible_hostname }}"
+    state: present
+  with_items: "{{ groups.all }}"
+
+- name: add apt key for webmin
+  apt_key: url=http://www.webmin.com/jcameron-key.asc state=present
+
+  #- name: set mysql version
+  #debconf: name='mysql-apt-config' question='mysql-apt-config/select-server' value='mysql-5.7' vtype='select'
+
+- name: set confirm mysql options
+  debconf: name='mysql-apt-config' question='mysql-apt-config/select-product' value='Ok' vtype='select'
+
+- name: add mysql-apt-config from oracle
+  apt: deb=https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb
+
+- name: add apt repository for webmin
+  apt_repository: repo='deb http://download.webmin.com/download/repository sarge contrib' filename='webmin' state=present update_cache=yes
+
+- name: install packages
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+  - mysql-server
+  - mysql-utilities
+  - webmin
+  - libdbi-perl
+  - libdbd-mysql-perl
+  - python-mysqldb
+
+- name: sets webmin root's password
+  command: /usr/share/webmin/changepass.pl /etc/webmin root root
+
+- name: remove access to test database
+  command: 'mysql -ne "{{ item }}"'
+  with_items:
+    - DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%'
+  changed_when: False
+  ignore_errors: true="absent"
+
+- name: set 'root'@'localhost' password
+  mysql_user: name=root host=localhost password=root state=present
+
+- name: create /root/.my.cnf file
+  copy: src=.my.cnf dest=/root/.my.cnf owner=root group=root mode=0600 backup=yes
+
+- name: set 'root'@'127.0.0.1' password
+  mysql_user: name=root host=127.0.0.1 password=root priv=*.*:ALL,GRANT state=present
+
+- name: set 'root'@'::1' password
+  mysql_user: name=root host=::1 password=root priv=*.*:ALL,GRANT state=present
+
+- name: set 'root'@'{{ ansible_hostname }}' password
+  mysql_user: name=root host={{ ansible_hostname }} password=root priv=*.*:ALL,GRANT state=present
+
+- name: create 'root'@'192.168.56.%' password
+  mysql_user: name=root host=192.168.56.% password=root priv=*.*:ALL,GRANT state=present
+
+- name: set mysql configuration
+  copy: src={{ ansible_hostname }}.cnf dest=/etc/mysql/mysql.conf.d/mysqld.cnf owner=root group=root mode=0644 backup=yes
+  notify: restart mysql

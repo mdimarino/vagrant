@@ -1,0 +1,9 @@
+---
+# tasks file for redis-slave
+
+- name: install packages
+  apt: name=['redis-server', 'redis-tools'] state=present autoremove=yes
+
+- name: set redis slave configuration
+  copy: src=redis.conf dest=/etc/redis/redis.conf owner=root group=root mode=0644
+  notify: restart redis-server

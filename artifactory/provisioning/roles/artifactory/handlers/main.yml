@@ -1,0 +1,8 @@
+---
+# handlers file for artifactory
+
+- name: start artifactory
+  systemd: state=started enabled=yes daemon_reload=yes name=artifactory
+
+- name: restart nginx
+  service: name=nginx state=restarted

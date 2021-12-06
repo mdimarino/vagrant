@@ -1,0 +1,23 @@
+---
+# tasks file for varnish
+
+- name: add apt key for varnish packages
+  apt_key: url=https://packagecloud.io/varnishcache/varnish5/gpgkey state=present
+
+- name: add apt repository for varnish
+  apt_repository: repo='deb https://packagecloud.io/varnishcache/varnish5/ubuntu/ xenial main' filename='varnish-cache' state=present
+
+- name: install packages
+  apt: name={{ item }} state=present autoremove=yes
+  with_items:
+    - varnish
+
+- name: create symlink from /lib/systemd/system/varnish.service to /etc/systemd/system
+  file: src=/lib/systemd/system/varnish.service dest=/etc/systemd/system/varnish.service state=link
+
+- name: change varnish listen port from 6081 to 80
+  replace: dest=/etc/systemd/system/varnish.service regexp='-a :6081' replace='-a :80'
+  notify: restart varnish
+
+- name: start varnish
+  systemd: state=started enabled=yes daemon_reload=yes name=varnish

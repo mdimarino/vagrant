@@ -1,0 +1,52 @@
+---
+# tasks file for jenkins-masters
+
+- name: insert/update IP address block in /etc/hosts
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      192.168.56.161    jenkins01.vagrant.local  jenkins01
+      192.168.56.162    jenkins02.vagrant.local  jenkins02
+      192.168.56.163    jenkins03.vagrant.local	 jenkins03
+
+- name: add apt key for jenkins
+  apt_key: url=https://pkg.jenkins.io/debian/jenkins.io.key state=present
+
+- name: add apt repository for jenkins
+  apt_repository: repo='deb http://pkg.jenkins.io/debian binary/' filename='jenkins' state=present update_cache=yes
+
+- name: install openjdk-8-jdk-headless package first
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - openjdk-8-jdk-headless
+
+- name: install packages
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - jenkins
+      - nginx
+
+- name: change /etc/nginx/sites-available/jenkins file
+  copy: src=nginx_jenkins dest=/etc/nginx/sites-available/jenkins owner=root group=root mode=0644 backup=yes
+  notify: restart nginx
+
+- name: remove /etc/nginx/sites-enabled/default symbolic link
+  file: path=/etc/nginx/sites-enabled/default state=absent follow=no
+  notify: restart nginx
+
+- name: create /etc/nginx/sites-enabled/jenkins symbolic link
+  file: path=/etc/nginx/sites-enabled/jenkins src=/etc/nginx/sites-available/jenkins state=link
+  notify: restart nginx
+
+- name: set authorized_key jenkins user
+  authorized_key: user=jenkins key='{{ item }}' state=present
+  with_file:
+    - files/authorized_keys.jenkins
+
+- name: set /var/lib/jenkins/.ssh/id_rsa
+  copy: src=id_rsa.jenkins dest=/var/lib/jenkins/.ssh/id_rsa owner=jenkins group=jenkins mode=0600 backup=yes
+
+- name: set /var/lib/jenkins/.ssh/config
+  copy: src=config.ssh dest=/var/lib/jenkins/.ssh/config owner=jenkins group=jenkins mode=0600 backup=yes

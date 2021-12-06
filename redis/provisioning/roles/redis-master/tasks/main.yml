@@ -1,0 +1,16 @@
+---
+# tasks file for redis-master
+
+- name: install packages
+  apt:
+    name: "{{ packages }}"
+    state: present
+    autoremove: yes
+  vars:
+    packages:
+    - redis-server
+    - redis-tools
+
+# - name: set redis master configuration
+#   copy: src=redis.conf dest=/etc/redis/redis.conf owner=root group=root mode=0644
+#   notify: restart redis-server

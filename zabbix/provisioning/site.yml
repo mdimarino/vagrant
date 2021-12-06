@@ -1,0 +1,38 @@
+---
+# This playbook deploys the whole application stack in this site.
+
+- name: apply common configuration to all nodes
+  hosts: all
+  become: True
+
+  roles:
+  - common
+  - swapfile
+
+- name: apply database configuration to zabbix-databases group
+  hosts: zabbix-databases
+  become: True
+
+  roles:
+  - zabbix-databases
+
+- name: apply server configuration to zabbix-servers group
+  hosts: zabbix-servers
+  become: True
+
+  roles:
+  - zabbix-servers
+
+- name: apply frontend configuration to zabbix-frontends group
+  hosts: zabbix-frontends
+  become: True
+
+  roles:
+  - zabbix-frontends
+
+- name: apply hosts configuration to zabbix-hosts group
+  hosts: zabbix-hosts
+  become: True
+
+  roles:
+  - zabbix-hosts

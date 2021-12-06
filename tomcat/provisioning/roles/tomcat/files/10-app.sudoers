@@ -1,0 +1,1 @@
+app	ALL=(ALL) NOPASSWD:/usr/bin/systemctl restart tomcat.service

@@ -1,0 +1,11 @@
+---
+# tasks file for postfix
+
+- name: install packages
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - ntp
+      - postfix
+      - mailutils
+

@@ -1,0 +1,23 @@
+---
+# tasks file for elasticsearch
+
+- name: add apt key for elasticsearch
+  apt_key: url=https://artifacts.elastic.co/GPG-KEY-elasticsearch state=present
+
+- name: add apt repository for elasticsearch
+  apt_repository: repo='deb http://packages.elastic.co/elasticsearch/2.x/debian stable main' filename='elastic-2.x' state=present update_cache=yes
+
+- name: install packages
+  apt: name={{ item }} state=present
+  with_items:
+  - openjdk-8-jdk-headless
+  - elasticsearch
+
+- name: change /etc/elasticsearch/elasticsearch.yml
+  template: src=elasticsearch.yml.j2 dest=/etc/elasticsearch/elasticsearch.yml owner=root group=elasticsearch mode=0750 backup=yes
+
+- name: change /etc/default/elasticsearch
+  template: src=elasticsearch.j2 dest=/etc/default/elasticsearch owner=root group=root mode=0644 backup=yes
+
+- name: start elasticsearch
+  systemd: state=started enabled=yes daemon_reload=yes name=elasticsearch

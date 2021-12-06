@@ -1,0 +1,42 @@
+---
+# tasks file for common
+
+- name: Add IP address of all hosts to all hosts
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ hostvars[item].ansible_eth1.ipv4.address }} {{ hostvars[item].ansible_fqdn }} {{ hostvars[item].ansible_hostname }}"
+    state: present
+  with_items: "{{ groups.all }}"
+
+- name: enable the EPEL repository
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: present
+
+- name: upgrade all packages
+  yum: 
+    name: '*' 
+    state: latest
+    update_cache: yes
+    lock_timeout: 60
+  notify:
+    - restart machine
+    - waiting for server to come back
+
+- name: install packages
+  yum:
+    name:
+      - vim
+    state: present
+
+- name: set timezone to America/Sao_Paulo
+  timezone: name=America/Sao_Paulo
+
+- name: set pt_BR.UTF-8 as default locale
+  command: localectl set-locale LANG=pt_BR.UTF-8
+
+- name: change .bash_profile file for user root
+  copy: src=.bash_profile.root dest=/root/.bash_profile owner=root group=root mode=0644 backup=yes
+
+- name: change .bash_profile file for user vagrant
+  copy: src=.bash_profile.vagrant dest=/home/vagrant/.bash_profile owner=vagrant group=vagrant mode=0644 backup=yes

@@ -1,0 +1,31 @@
+---
+# tasks file for common
+
+- name: enable epel repository
+  yum: name=epel-release state=present
+
+- name: upgrade all packages
+  yum: name=* state=latest update_cache=yes
+  notify:
+    - restart machine
+    - waiting for server to come back
+
+- name: install packages
+  yum: name={{ item }} state=present
+  with_items:
+    - libselinux-python
+
+- name: set as default locale
+  command: localectl set-locale LANG=pt_BR.UTF-8 LC_ALL=pt_BR.UTF-8
+
+- name: copy /usr/share/zoneinfo/America/Sao_Paulo to /etc/localtime
+  copy: src=/usr/share/zoneinfo/America/Sao_Paulo dest=/etc/localtime owner=root group=root mode=0644 backup=yes
+
+- name: change /etc/sysconfig/clock file for America/Sao_Paulo timezone
+  copy: src=clock dest=/etc/sysconfig/clock owner=root group=root mode=0644 backup=yes
+
+- name: change .bash_profile file for user root
+  copy: src=.bash_profile.root dest=/root/.bash_profile owner=root group=root mode=0644 backup=yes
+
+- name: change .bash_profile file for user vagrant
+  copy: src=.bash_profile.vagrant dest=/home/vagrant/.bash_profile owner=vagrant group=vagrant mode=0644 backup=yes

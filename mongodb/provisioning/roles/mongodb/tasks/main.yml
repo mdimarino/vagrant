@@ -1,0 +1,30 @@
+---
+# tasks file for mongodb
+
+- name: add IP address of all hosts to all hosts
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ hostvars[item].ansible_facts.all_ipv4_addresses[1] }} {{ hostvars[item].ansible_fqdn }} {{ hostvars[item].ansible_hostname }}"
+    state: present
+  with_items: "{{ groups.all }}"
+
+- name: add apt key
+  # apt_key: url=https://www.mongodb.org/static/pgp/server-4.2.asc state=present
+  apt_key: url=https://www.mongodb.org/static/pgp/server-3.0.asc state=present
+
+- name: add apt repository for mongodb
+  # apt_repository: repo='deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse' filename='mongodb-org-4.2' state=present
+  apt_repository: repo='deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse' filename='mongodb-org-3.0' state=present
+
+- name: install packages
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - mongodb-org
+
+- name: set /etc/mongod.conf
+  copy: src=mongod.conf dest=/etc/mongod.conf owner=root group=root mode=0644 backup=yes
+  notify: restart mongodb
+
+- name: start mongodb
+  systemd: state=started enabled=yes daemon_reload=yes name=mongod

@@ -1,0 +1,58 @@
+---
+# tasks file for zabbix-servers
+
+- name: install packages
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - mariadb-client
+      - python3-pymysql
+
+- name: install zabbix package to configure remote repository
+  apt:
+    deb: https://repo.zabbix.com/zabbix/5.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_5.0-1+focal_all.deb
+
+- name: execute 'apt-get update' to get zabbix repository package list
+  apt:
+    update_cache: yes
+
+- name: install zabbix server package
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - zabbix-server-mysql
+
+- name: populate zabbix database
+  mysql_db:
+    name: zabbix
+    login_host: zabbix1.vagrant.local
+    login_user: zabbix
+    login_password: zabbix
+    state: import
+    target: /usr/share/doc/zabbix-server-mysql/create.sql.gz
+    force: yes
+
+- name: change DBHost at /etc/zabbix/zabbix_server.conf
+  replace:
+    path: /etc/zabbix/zabbix_server.conf
+    regexp: '# DBHost=localhost'
+    replace: 'DBHost=zabbix1.vagrant.local'
+  notify: restart zabbix-server
+
+- name: change DBPassword at /etc/zabbix/zabbix_server.conf
+  replace:
+    path: /etc/zabbix/zabbix_server.conf
+    regexp: '# DBPassword='
+    replace: 'DBPassword=zabbix'
+  notify: restart zabbix-server
+
+- name: enable zabbix-server 
+  systemd:
+    name: zabbix-server
+    enabled: yes
+
+- name: install zabbix agent 2 package
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - zabbix-agent2

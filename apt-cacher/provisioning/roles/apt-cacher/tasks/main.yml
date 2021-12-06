@@ -1,0 +1,12 @@
+---
+# tasks file for apt-cacher
+
+- name: install packages
+  apt: name={{ packages }} state=present autoremove=yes update_cache=yes
+  vars:
+    packages:
+      - apt-cacher-ng
+
+- name: change /etc/apt-cacher-ng/acng.conf
+  copy: src=acng.conf dest=/etc/apt-cacher-ng/acng.conf owner=root group=root mode=0644 backup=yes
+  notify: restart apt-cacher-ng

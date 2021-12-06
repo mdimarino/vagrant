@@ -1,0 +1,5 @@
+---
+# vars file for tomcat
+
+TOMCAT_MAJOR: 9
+TOMCAT_RELEASE: 9.0.31

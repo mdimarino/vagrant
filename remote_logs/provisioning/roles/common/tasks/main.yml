@@ -1,0 +1,39 @@
+---
+# tasks file for common
+
+- name: use apt-cacher for fast package updates
+  copy: src=01proxy dest=/etc/apt/apt.conf.d/01proxy owner=root group=root mode=0644
+
+- name: update apt cache
+  apt: update_cache=yes
+
+- name: set system timezone
+  copy: content='America/Sao_Paulo' dest=/etc/timezone owner=root group=root mode=0644
+  notify: update timezone
+
+- name: generate pt_BR.UTF-8 locales
+  locale_gen: name=pt_BR.UTF-8 state=present
+  notify: update locales
+
+- name: upgrade all system packages
+  apt: upgrade=dist
+
+- name: install packages
+  apt: name={{ item }} state=present autoremove=yes
+  with_items:
+    - ntp
+
+- name: remove packages chef and puppet
+  apt: name={{ item }} state=absent purge=yes autoremove=yes
+  with_items:
+    - chef
+    - puppet
+
+- name: turns vim default system editor
+  alternatives: name=editor path=/usr/bin/vim.basic
+
+- name: change .bashrc file for user root
+  copy: src=.bashrc.root dest=/root/.bashrc owner=root group=root mode=0644
+
+- name: change .bashrc file for user vagrant
+  copy: src=.bashrc.vagrant dest=/home/vagrant/.bashrc owner=vagrant group=vagrant mode=0644

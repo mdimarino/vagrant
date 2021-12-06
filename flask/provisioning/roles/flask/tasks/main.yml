@@ -1,0 +1,9 @@
+---
+# tasks file for flask
+
+- name: install packages for flask
+  apt: name={{ item }} state=present autoremove=yes
+  with_items:
+    - python3-flask
+    - python3-venv
+    - git

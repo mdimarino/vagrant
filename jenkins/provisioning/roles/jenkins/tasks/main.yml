@@ -1,0 +1,33 @@
+---
+# tasks file for jenkins
+
+- name: add apt key for jenkins
+  apt_key: url=https://pkg.jenkins.io/debian/jenkins.io.key state=present
+
+- name: add apt repository for jenkins
+  apt_repository: repo='deb http://pkg.jenkins.io/debian binary/' filename='jenkins' state=present update_cache=yes
+
+- name: install openjdk-11-jdk-headless package first
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - openjdk-11-jdk-headless
+
+- name: install packages
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - jenkins
+      - nginx
+
+- name: change /etc/nginx/sites-available/jenkins file
+  copy: src=nginx_jenkins dest=/etc/nginx/sites-available/jenkins owner=root group=root mode=0644 backup=yes
+  notify: restart nginx
+
+- name: remove /etc/nginx/sites-enabled/default symbolic link
+  file: path=/etc/nginx/sites-enabled/default state=absent follow=no
+  notify: restart nginx
+
+- name: create /etc/nginx/sites-enabled/jenkins symbolic link
+  file: path=/etc/nginx/sites-enabled/jenkins src=/etc/nginx/sites-available/jenkins state=link
+  notify: restart nginx

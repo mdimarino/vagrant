@@ -1,0 +1,33 @@
+---
+# tasks file for graylog
+
+- name: change /etc/hosts
+  copy: src=hosts dest=/etc/hosts owner=root group=root mode=0644 backup=yes
+
+- name: install graylog .deb package from the internet
+  apt: deb=https://packages.graylog2.org/repo/packages/graylog-2.2-repository_latest.deb
+
+- name: update repositories
+  apt: update_cache=yes
+
+- name: install packages
+  apt: name={{ item }} state=present
+  with_items:
+  - openjdk-8-jdk-headless
+  - graylog-server
+  - pwgen
+
+- name: generate password secret for root user
+  command: /usr/bin/pwgen -N 1 -s 96
+  register: password_secret
+
+- name: generate hash password for the root user
+  shell: echo -n {{ GRAYLOG_ROOT_PASSWORD }} | shasum -a 256 | cut -f1 -d" "
+  register: hash_password
+
+- name: change /etc/graylog/server/server.conf
+  template: src=server.conf.j2 dest=/etc/graylog/server/server.conf owner=root group=root mode=0644 backup=yes
+  notify: restart graylog-server
+
+- name: start graylog-server
+  systemd: state=started enabled=yes daemon_reload=yes name=graylog-server

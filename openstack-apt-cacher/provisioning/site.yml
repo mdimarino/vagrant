@@ -1,0 +1,16 @@
+---
+# This playbook deploys the whole application stack in this site.
+
+- name: apply common configuration to all nodes
+  hosts: all
+  become: True
+
+  roles:
+  - common
+
+- name: apply apt-cacher configuration
+  hosts: all
+  become: true
+
+  roles:
+  - apt-cacher

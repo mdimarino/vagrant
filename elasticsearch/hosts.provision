@@ -1,0 +1,7 @@
+192.168.56.21 master01.vagrant.local master01
+192.168.56.22 master02.vagrant.local master02
+192.168.56.23 master03.vagrant.local master03
+192.168.56.24 data01.vagrant.local data01
+192.168.56.25 data02.vagrant.local data02
+192.168.56.26 client01.vagrant.local client01
+192.168.56.27 client02.vagrant.local client02

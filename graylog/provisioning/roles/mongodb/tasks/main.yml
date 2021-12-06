@@ -1,0 +1,7 @@
+---
+# tasks file for mongodb
+
+- name: install packages
+  apt: name={{ item }} state=present
+  with_items:
+  - mongodb

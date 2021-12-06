@@ -1,0 +1,11 @@
+---
+# vars file for dhcp-dns
+
+domain-name = vagrant.local
+domain-name-servers = 192.168.56.191
+subnet = 192.168.56.0
+netmask = 255.255.255.0
+range-begin = 192.168.56.11
+range-end = 192.168.56.19
+routers = 192.168.56.254
+broadcast-address = 192.168.56.255

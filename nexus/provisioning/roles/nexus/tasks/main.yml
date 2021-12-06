@@ -1,0 +1,42 @@
+---
+# tasks file for nexus
+
+- name: install packages
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - openjdk-8-jdk-headless
+      - nginx
+
+- name: unarchive a file from http://download.sonatype.com/nexus/3/nexus-3.19.0-01-unix.tar.gz
+  unarchive: src=http://download.sonatype.com/nexus/3/nexus-3.19.0-01-unix.tar.gz dest=/opt remote_src=yes
+
+- name: add group nexus
+  group: name=nexus
+
+- name: add user nexus
+  user: name=nexus comment='Nexus User Account' createhome=yes group=nexus shell=/bin/bash state=present
+
+- name: change /opt/nexus* ownership and group
+  file: path=/opt/nexus-3.19.0-01 owner=nexus group=nexus recurse=yes state=directory
+
+- name: change /opt/sonatype-work ownership and group
+  file: path=/opt/sonatype-work owner=nexus group=nexus recurse=yes state=directory
+
+- name: create symbolic link /opt/nexus
+  file: src=/opt/nexus-3.19.0-01 dest=/opt/nexus owner=nexus group=nexus state=link
+
+- name: set /etc/systemd/system/nexus.service
+  copy: src=nexus.service dest=/etc/systemd/system/nexus.service owner=root group=root mode=0644 backup=yes
+  notify: restart nexus
+
+- name: set /etc/nginx/sites-available/nexus
+  copy: src=nexus.nginx dest=/etc/nginx/sites-available/nexus owner=root group=root mode=0644 backup=yes
+  notify: restart nginx
+
+- name: set /etc/nginx/conf.d/nexus.conf
+  copy: src=nexus.conf.nginx dest=/etc/nginx/conf.d/nexus.conf owner=root group=root mode=0644 backup=yes
+  notify: restart nginx
+
+- name: overwrite symbolic link /etc/nginx/sites-enabled/default
+  file: src=/etc/nginx/sites-available/nexus dest=/etc/nginx/sites-enabled/default owner=root group=root state=link

@@ -1,0 +1,3 @@
+cluster_name: graylog
+ES_HEAP_SIZE: 768m
+GRAYLOG_ROOT_PASSWORD: graylog

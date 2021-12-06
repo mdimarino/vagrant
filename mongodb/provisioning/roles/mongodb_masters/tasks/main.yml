@@ -1,0 +1,13 @@
+---
+# tasks file for mongodb_masters
+
+- name: ensure replicaset rs0 exists
+  mongodb_replicaset:
+    login_host: localhost
+    login_user: admin
+    login_password: admin
+    replica_set: rs0
+    members: "{{ groups.all }}:27017"
+    # - mongodb1:27017
+    # - mongodb2:27017
+    # - mongodb3:27017

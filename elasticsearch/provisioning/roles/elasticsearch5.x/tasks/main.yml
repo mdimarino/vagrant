@@ -1,0 +1,49 @@
+---
+# tasks file for elasticsearch
+
+- name: change /etc/hosts
+  copy: src=hosts dest=/etc/hosts owner=root group=root mode=0644 backup=yes
+
+- name: add apt key for elasticsearch
+  apt_key: url=https://artifacts.elastic.co/GPG-KEY-elasticsearch state=present
+
+- name: add apt repository for elasticsearch
+  apt_repository: repo='deb http://artifacts.elastic.co/packages/5.x/apt stable main' filename='elastic-5.x' state=present update_cache=yes
+
+- name: install packages
+  apt: name={{ item }} state=present
+  with_items:
+  - openjdk-8-jdk-headless
+  - elasticsearch
+
+- name: change /etc/elasticsearch/elasticsearch.yml for master boxes
+  template: src=master.elasticsearch.yml.j2 dest=/etc/elasticsearch/elasticsearch.yml owner=root group=elasticsearch mode=0660 backup=yes
+  when: inventory_hostname | search("master")
+
+- name: change /etc/elasticsearch/elasticsearch.yml for data boxes
+  template: src=data.elasticsearch.yml.j2 dest=/etc/elasticsearch/elasticsearch.yml owner=root group=elasticsearch mode=0660 backup=yes
+  when: inventory_hostname | search("data")
+
+- name: change /etc/elasticsearch/elasticsearch.yml for client boxes
+  template: src=client.elasticsearch.yml.j2 dest=/etc/elasticsearch/elasticsearch.yml owner=root group=elasticsearch mode=0660 backup=yes
+  when: inventory_hostname | search("client")
+
+- name: install kibana package on client boxes
+  apt: name={{ item }} state=present
+  with_items:
+  - kibana
+  when: inventory_hostname | search("client")
+
+- name: change /etc/kibana/kibana.yml for client boxes
+  template: src=client.kibana.yml.j2 dest=/etc/kibana/kibana.yml owner=root group=root mode=0644 backup=yes
+  when: inventory_hostname | search("client")
+
+- name: change /etc/elasticsearch/jvm.options
+  template: src=jvm.options.j2 dest=/etc/elasticsearch/jvm.options owner=root group=elasticsearch mode=0660 backup=yes
+
+- name: start elasticsearch
+  systemd: state=started enabled=yes daemon_reload=yes name=elasticsearch
+
+- name: start kibana
+  systemd: state=started enabled=yes daemon_reload=yes name=kibana
+  when: inventory_hostname | search("client")

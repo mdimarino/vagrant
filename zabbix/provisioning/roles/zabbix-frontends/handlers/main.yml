@@ -1,0 +1,5 @@
+---
+# handlers file for zabbix-frontends
+
+- name: restart apache2
+  service: name=apache2 state=restarted

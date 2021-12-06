@@ -1,0 +1,26 @@
+---
+# This playbook deploys the whole application stack in this site.
+
+- name: apply common configuration to all nodes
+  hosts: all
+  become: True
+
+  roles:
+  - common
+  - swapfile
+  # - docker
+  - jenkins
+
+# - name: apply jenkins_masters configuration to jenkins masters nodes
+#   hosts: jenkins_masters
+#   become: True
+
+#   roles:
+#   - jenkins_masters
+
+# - name: apply jenkins_slaves configuration to jenkins slaves nodes
+#   hosts: jenkins_slaves
+#   become: True
+
+#   roles:
+#   - jenkins_slaves

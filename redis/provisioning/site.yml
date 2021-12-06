@@ -1,0 +1,24 @@
+---
+# This playbook deploys the whole application stack in this site.
+
+# inventory file is dynamically generated at
+# .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory
+# only after all instances are created
+
+- name: apply common configuration to all nodes
+  hosts: all
+  become: true
+  roles:
+  - common
+
+- name: setup redis-master
+  hosts: redis_master
+  become: true
+  roles:
+  - redis-master
+
+# - name: setup redis-slave
+#   hosts: redis-slaves
+#   become: true
+#   roles:
+#   - redis-slave

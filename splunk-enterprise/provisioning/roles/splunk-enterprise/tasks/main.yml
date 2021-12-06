@@ -1,0 +1,18 @@
+---
+# tasks file for splunk-enterprise
+
+- name: install python3-docker package
+  apt: name=python3-docker state=present
+
+- name: start a splunk-enterprise container
+  docker_container:
+    name: splunk-enterprise
+    image: splunk/splunk:latest
+    state: started
+    restart: yes
+    published_ports: "8000:8000"
+    env:
+        SPLUNK_START_ARGS: '--accept-license'
+        SPLUNK_PASSWORD: 'dimarino'
+    container_default_behavior: no_defaults
+    restart_policy: always

@@ -1,0 +1,5 @@
+---
+# tasks file for samba
+
+- name: install samba package
+  apt: name=samba state=present

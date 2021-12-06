@@ -1,0 +1,5 @@
+---
+# tasks file for podman
+
+- name: install podman package
+  apt: name=podman state=present

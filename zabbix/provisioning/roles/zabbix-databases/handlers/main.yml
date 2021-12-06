@@ -1,0 +1,6 @@
+---
+# handlers file for zabbix-databases
+
+- name: restart mariadb
+  service: name=mariadb state=restarted
+  

@@ -1,0 +1,11 @@
+---
+# handlers file for common
+
+- name: update timezone
+  command: dpkg-reconfigure --frontend noninteractive tzdata
+
+- name: update locales
+  command: "{{ item }}"
+  with_items:
+    - dpkg-reconfigure --frontend noninteractive locales
+    - update-locale LANG=pt_BR.UTF-8 LANGUAGE=pt_BR

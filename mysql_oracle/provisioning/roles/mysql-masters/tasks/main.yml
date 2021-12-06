@@ -1,0 +1,10 @@
+---
+# tasks file for mysql-masters
+
+- name: enable master-master replication under db1
+  command: /usr/bin/mysqlreplicate --master=root:root@db1.vagrant.local:3306 --slave=root:root@db2.vagrant.local:3306 --rpl-user=replicant:N3xus-6 --start-from-beginning
+  when: ansible_hostname == "db1"
+
+- name: enable master-master replication under db2
+  command: /usr/bin/mysqlreplicate --master=root:root@db2.vagrant.local:3306 --slave=root:root@db1.vagrant.local:3306 --rpl-user=replicant:N3xus-6 --start-from-beginning
+  when: ansible_hostname == "db2"

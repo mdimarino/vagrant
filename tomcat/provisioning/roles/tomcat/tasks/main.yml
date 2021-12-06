@@ -1,0 +1,51 @@
+---
+# tasks file for tomcat
+
+- name: install openjdk-11-jdk-headless
+  apt: name=openjdk-11-jdk-headless state=present update_cache=yes
+
+- name: add group app
+  group: name=app gid=1002
+
+- name: add user app
+  user: name=app comment='Application User Account' createhome=yes group=app uid=1002 home=/opt/app shell=/bin/bash state=present
+
+- name: change .bashrc file for user app
+  copy: src=.bashrc.app dest=/opt/app/.bashrc owner=app group=app mode=0644 backup=yes
+
+- name: install tomcat from web archive
+  unarchive: remote_src=yes src=https://archive.apache.org/dist/tomcat/tomcat-{{TOMCAT_MAJOR}}/v{{TOMCAT_RELEASE}}/bin/apache-tomcat-{{TOMCAT_RELEASE}}.tar.gz dest=/opt/app owner=app group=app creates=/opt/app/tomcat/bin/version.sh
+
+- name: change ownership of /opt/app/apache-tomcat-{{TOMCAT_RELEASE}}
+  file: path=/opt/app/apache-tomcat-{{TOMCAT_RELEASE}} owner=app group=app
+
+- name: create symbolic link /opt/app/tomcat
+  file: src=/opt/app/apache-tomcat-{{TOMCAT_RELEASE}} dest=/opt/app/tomcat owner=app group=app state=link
+
+- name: set /opt/app/tomcat/conf/tomcat-users.xml
+  copy: src=tomcat-users.xml dest=/opt/app/tomcat/conf/tomcat-users.xml owner=app group=app mode=0644 backup=yes
+  notify: restart tomcat
+
+- name: set /opt/app/tomcat/webapps/manager/META-INF/context.xml
+  copy: src=manager-context.xml dest=/opt/app/tomcat/webapps/manager/META-INF/context.xml owner=app group=app mode=0644 backup=yes
+  notify: restart tomcat
+
+- name: set /opt/app/tomcat/webapps/host-manager/META-INF/context.xml
+  copy: src=host-manager-context.xml dest=/opt/app/tomcat/webapps/host-manager/META-INF/context.xml owner=app group=app mode=0644 backup=yes
+  notify: restart tomcat
+
+- name: create /etc/systemd/system/tomcat.service file
+  copy: src=tomcat.service dest=/etc/systemd/system/tomcat.service owner=root group=root mode=0644 backup=yes
+
+- name: start tomcat service and enable at boot
+  systemd: name=tomcat daemon_reload=yes state=started enabled=yes
+
+- name: install nginx
+  apt: name=nginx state=present update_cache=yes
+
+- name: set nginx proxy configuration
+  copy: src=default.nginx dest=/etc/nginx/sites-available/default owner=root group=root mode=0644 backup=yes
+  notify: restart nginx
+
+- name: set sudo rule for app user
+  copy: src=10-app.sudoers dest=/etc/sudoers.d/10-app owner=root group=root mode=0440 backup=yes

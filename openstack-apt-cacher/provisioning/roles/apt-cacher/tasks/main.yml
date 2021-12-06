@@ -1,0 +1,14 @@
+---
+# tasks file for apt-cacher
+
+- name: install packages
+  apt: name={{ item }} state=present autoremove=yes
+  with_items:
+    - apt-cacher
+
+- name: change /etc/apt-cacher/apt-cacher.conf file
+  copy: src=apt-cacher.conf dest=/etc/apt-cacher/apt-cacher.conf owner=root group=root mode=0644
+  notify: restart apt-cacher
+
+- name: change /etc/apt/apt.conf.d/01proxy file
+  copy: src=01proxy dest=/etc/apt/apt.conf.d/01proxy owner=root group=root mode=0644

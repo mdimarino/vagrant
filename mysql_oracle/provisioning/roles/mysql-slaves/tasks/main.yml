@@ -1,0 +1,5 @@
+---
+# tasks file for mysql-slaves
+
+- name: enable master-slave replication from master db2 to all slaves
+  command: /usr/bin/mysqlreplicate --master=root:root@db2.vagrant.local:3306 --slave=root:root@{{ ansible_hostname }}.vagrant.local:3306 --rpl-user=replicant:N3xus-6 --start-from-beginning

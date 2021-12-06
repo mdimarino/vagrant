@@ -1,0 +1,28 @@
+---
+# tasks file for artifactory
+
+- name: add apt key for artifactory
+  apt_key: url=https://bintray.com/user/downloadSubjectPublicKey?username=jfrog state=present
+
+- name: add apt repository for artifactory
+  apt_repository: repo='deb https://jfrog.bintray.com/artifactory-debs xenial main' filename='artifactory' state=present update_cache=yes
+
+- name: install packages
+  apt: name={{ item }} state=present
+  with_items:
+  - openjdk-8-jdk-headless
+  - jfrog-artifactory-oss
+  - nginx
+  # notify: start artifactory
+
+- name: change /etc/nginx/sites-available/artifactory file
+  copy: src=artifactory.nginx dest=/etc/nginx/sites-available/artifactory owner=root group=root mode=0644 backup=yes
+  notify: restart nginx
+
+- name: remove /etc/nginx/sites-enabled/default symbolic link
+  file: path=/etc/nginx/sites-enabled/default state=absent follow=no
+  notify: restart nginx
+
+- name: create /etc/nginx/sites-enabled/artifactory symbolic link
+  file: path=/etc/nginx/sites-enabled/artifactory src=/etc/nginx/sites-available/artifactory state=link
+  notify: restart nginx

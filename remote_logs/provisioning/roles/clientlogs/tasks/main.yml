@@ -1,0 +1,6 @@
+---
+# tasks file for clientlogs
+
+- name: rsyslog remote configuration
+  copy: src=rsyslog.conf dest=/etc/rsyslog.conf owner=root group=root mode=0644
+  notify: restart rsyslog

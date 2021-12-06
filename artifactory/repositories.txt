@@ -1,0 +1,14 @@
+-local
+maven-release-local
+maven-snapshot-local
+plugins-release-local
+plugins-snapshot-local
+-remote
+maven-remote-repo (https://repo.maven.apache.org/maven2/)
+-virtual
+maven-release-virtual (maven-release-local,maven-remote-repo)
+maven-snapshot-virtual (maven-snapshot-local,maven-remote-repo)
+plugins-release-virtual (plugins-release-local,maven-remote-repo)
+plugins-snapshot-virtual (plugins-snapshot-local,maven-remote-repo)
+
+git clone git@github.com:JFrogDev/project-examples.git

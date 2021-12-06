@@ -1,0 +1,38 @@
+---
+# tasks file for git
+
+- name: Create git group
+  group: name=git state=present
+
+- name: Create git user
+  user: name=git comment='Git User Account' createhome=yes home=/opt/git group=git shell=/bin/bash generate_ssh_key=yes state=present
+
+- name: Change .bashrc file for git user
+  copy: src=.bashrc.git dest=/opt/git/.bashrc owner=git group=git mode=0644 backup=yes
+
+- name: Create .git-prompt.sh file under ~git directory
+  copy: src=.git-prompt.sh dest=/opt/git/.git-prompt.sh owner=git group=git mode=0644 backup=yes
+
+- name: Create empty authorized_keys file for git user
+  file: path=/opt/git/.ssh/authorized_keys state=touch owner=git group=git mode=0600
+
+- name: Set option adminkey for package gitolite3
+  debconf: name=gitolite3 question='gitolite3/adminkey' vtype='string' value=/opt/git/.ssh/id_rsa.pub
+
+- name: Set option gituser for package gitolite3
+  debconf: name=gitolite3 question='gitolite3/gituser' vtype='string' value=git
+
+- name: Set option gitdir for package gitolite3
+  debconf: name=gitolite3 question='gitolite3/gitdir' vtype='string' value=/opt/git
+
+- name: Install git packages
+  apt: name={{ item }} state=present autoremove=yes
+  with_items:
+    - git
+    - gitolite3
+    - libjson-perl
+
+- name: Checkout gitolite config repository
+  git: repo=ssh://git.vagrant.local/gitolite-admin.git dest=/opt/git/gitolite-admin.git accept_hostkey=yes
+  become: yes
+  become_user: git

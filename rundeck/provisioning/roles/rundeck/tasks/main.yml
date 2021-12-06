@@ -1,0 +1,22 @@
+---
+# tasks file for rundeck
+
+- name: install packages
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - curl
+      - gnupg
+      - apt-transport-https
+
+- name: add apt key for rundeck repository
+  apt_key: url='https://packagecloud.io/pagerduty/rundeck/gpgkey' state=present
+
+- name: add apt repository for rundeck
+  apt_repository: repo='deb https://packagecloud.io/pagerduty/rundeck/ubuntu/ focal main' filename='rundeck' state=present update_cache=yes
+
+- name: install rundeck packages
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - rundeck

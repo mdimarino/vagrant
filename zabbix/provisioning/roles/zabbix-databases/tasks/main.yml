@@ -1,0 +1,51 @@
+---
+# tasks file for zabbix-databases
+
+- name: install packages
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - mariadb-server
+      - python3-pymysql
+
+- name: set mariadb root password
+  mysql_user:
+    name: root
+    password: dimarino
+    host: localhost
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    state: present
+
+- name: create /root/.my.cnf file
+  blockinfile:
+    path: /root/.my.cnf
+    create: yes
+    owner: root
+    group: root
+    mode: 0600
+    block: |
+      [client]
+      user=root
+      password=dimarino
+
+- name: create zabbix database
+  mysql_db:
+    name: zabbix
+    encoding: utf8
+    collation: utf8_bin
+    state: present
+
+- name: create zabbix database user and its grants
+  mysql_user:
+    name: zabbix
+    password: zabbix
+    host: 192.168.56.%
+    priv: 'zabbix.*:ALL'
+    state: present
+
+- name: change mariadb listen address from 127.0.0.1 to 0.0.0.0
+  replace:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: 'bind-address            = 127.0.0.1'
+    replace: 'bind-address            = 0.0.0.0'
+  notify: restart mariadb

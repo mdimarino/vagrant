@@ -1,0 +1,8 @@
+---
+# tasks file for etcd
+
+- name: install packages
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - etcd

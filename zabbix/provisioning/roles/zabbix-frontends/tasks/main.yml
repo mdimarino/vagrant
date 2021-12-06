@@ -1,0 +1,28 @@
+---
+# tasks file for zabbix-frontends
+
+- name: install zabbix package to configure remote repository
+  apt:
+    deb: https://repo.zabbix.com/zabbix/5.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_5.0-1+focal_all.deb
+
+- name: execute 'apt-get update' to get zabbix repository package list
+  apt:
+    update_cache: yes
+
+- name: install zabbix server packages
+  apt: name={{ packages }} state=present autoremove=yes
+  vars:
+    packages:
+      - zabbix-frontend-php
+      - zabbix-apache-conf
+
+- name: change /etc/zabbix/web/zabbix.conf.php
+  copy: src=zabbix.conf.php dest=/etc/zabbix/web/zabbix.conf.php owner=www-data group=www-data mode=0600 backup=yes
+  notify: restart apache2
+
+- name: change timezone from /etc/zabbix/apache.conf
+  replace:
+    path: /etc/zabbix/apache.conf
+    regexp: '# php_value date.timezone Europe/Riga'
+    replace: 'php_value date.timezone America/Sao_Paulo'
+  notify: restart apache2
