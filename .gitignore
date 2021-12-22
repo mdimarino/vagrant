@@ -2,3 +2,4 @@
 .vagrant/
 hosts
 *.log
+kubernetes/provisioning/join-command
