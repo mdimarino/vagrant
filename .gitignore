@@ -3,3 +3,6 @@
 hosts
 *.log
 kubernetes/provisioning/join-command
+kubernetes/config
+kubernetes/kubeconfig
+

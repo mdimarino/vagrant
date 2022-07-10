@@ -1,4 +1,7 @@
 {
     "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/ansible-community/schemas/main/f/ansible.json#/$defs/tasks": "file:///home/mazevedo/git/vagrant/kubernetes/provisioning/roles/kubernetes_masters/tasks/main.yml"
+    }
 }

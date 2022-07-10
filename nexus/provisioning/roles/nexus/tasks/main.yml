@@ -8,8 +8,9 @@
       - openjdk-8-jdk-headless
       - nginx
 
-- name: unarchive a file from http://download.sonatype.com/nexus/3/nexus-3.19.0-01-unix.tar.gz
-  unarchive: src=http://download.sonatype.com/nexus/3/nexus-3.19.0-01-unix.tar.gz dest=/opt remote_src=yes
+# para próximas versões tente https://download.sonatype.com/nexus/3/latest-unix.tar.gz
+- name: unarchive a file from https://download.sonatype.com/nexus/3/nexus-3.37.3-02-unix.tar.gz
+  unarchive: src=https://download.sonatype.com/nexus/3/nexus-3.37.3-02-unix.tar.gz dest=/opt remote_src=yes
 
 - name: add group nexus
   group: name=nexus
@@ -18,13 +19,13 @@
   user: name=nexus comment='Nexus User Account' createhome=yes group=nexus shell=/bin/bash state=present
 
 - name: change /opt/nexus* ownership and group
-  file: path=/opt/nexus-3.19.0-01 owner=nexus group=nexus recurse=yes state=directory
+  file: path=/opt/nexus-3.37.3-02 owner=nexus group=nexus recurse=yes state=directory
 
 - name: change /opt/sonatype-work ownership and group
   file: path=/opt/sonatype-work owner=nexus group=nexus recurse=yes state=directory
 
 - name: create symbolic link /opt/nexus
-  file: src=/opt/nexus-3.19.0-01 dest=/opt/nexus owner=nexus group=nexus state=link
+  file: src=/opt/nexus-3.37.3-02 dest=/opt/nexus owner=nexus group=nexus state=link
 
 - name: set /etc/systemd/system/nexus.service
   copy: src=nexus.service dest=/etc/systemd/system/nexus.service owner=root group=root mode=0644 backup=yes

@@ -1,6 +1,9 @@
 ---
 # tasks file for kubernetes_masters
 
+- name: Pull the required images
+  shell: kubeadm config images pull
+
 - name: Initialize the Kubernetes cluster using kubeadm
   shell: kubeadm init --apiserver-advertise-address={{ ansible_enp0s8.ipv4.address }} --apiserver-cert-extra-sans={{ ansible_enp0s8.ipv4.address }}  --node-name {{ ansible_hostname }} --pod-network-cidr=172.31.0.0/16 --kubernetes-version {{ k8s_version }}
 
@@ -9,6 +12,9 @@
 
 - name: Copy /etc/kubernetes/admin.conf file on the remote
   copy: src=/etc/kubernetes/admin.conf dest=/home/vagrant/.kube/config remote_src=yes
+
+- name: Copy /home/vagrant/.kube/config file to /vagrant
+  copy: src=/home/vagrant/.kube/config dest=/vagrant/kubeconfig remote_src=yes
 
 - name: Change permissions
   file: dest=/home/vagrant/.kube owner=vagrant group=vagrant recurse=yes

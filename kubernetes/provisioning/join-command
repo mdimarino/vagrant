@@ -1,1 +1,0 @@
-kubeadm join 192.168.56.221:6443 --token 8ftvdl.ope8bmtwtpc40nj3 --discovery-token-ca-cert-hash sha256:0c49dd2be7f5fdb0ef3c22c4ddc56bba5e9bff89887eea3faf83347e15f3dc9b 

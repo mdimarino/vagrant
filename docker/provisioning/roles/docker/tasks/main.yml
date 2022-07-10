@@ -11,7 +11,7 @@
   apt_key: url='https://download.docker.com/linux/ubuntu/gpg' state=present
 
 - name: add apt repository for docker
-  apt_repository: repo='deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable' filename='docker' state=present update_cache=yes
+  apt_repository: repo='deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable' filename='docker' state=present update_cache=yes
 
 - name: install docker packages
   apt: name={{ packages }} state=present autoremove=yes

@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "ubuntu/focal64"
+  config.vm.box = "ubuntu/jammy64"
   ## config.vm.box = "debian/bullseye64"
 
   # Disable automatic box update checking. If you disable this, then
@@ -70,9 +70,9 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get install -y apache2
   # SHELL
 
-  config.vm.define "apt-cacher-ng", primary: true do |instance|
+  config.vm.define "apt-cacher", primary: true do |instance|
 
-    instance.vm.hostname = "apt-cacher-ng.vagrant.local"
+    instance.vm.hostname = "apt-cacher.vagrant.local"
     instance.vm.network "private_network", ip: "192.168.56.253"
 
     # instance.vm.synced_folder ".", "/vagrant", disabled: true

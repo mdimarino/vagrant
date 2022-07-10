@@ -12,8 +12,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "ubuntu/focal64"
-  # config.vm.box = "debian/bullseye64"
+  config.vm.box = "ubuntu/jammy64"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -62,28 +61,29 @@ Vagrant.configure("2") do |config|
   # information on available options.
 
   # Enable provisioning with a shell script. Additional provisioners such as
-  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
+  # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
   # documentation for more information about their specific syntax and use.
   # config.vm.provision "shell", inline: <<-SHELL
   #   apt-get update
   #   apt-get install -y apache2
   # SHELL
 
-  N = 3
+  N = 1
   (1..N).each do |instance_id|
-    config.vm.define "k#{instance_id}" do |instance|
 
-      instance.vm.hostname = "k#{instance_id}.vagrant.local"
-      instance.vm.network "private_network", ip: "192.168.56.22#{instance_id}"
+    config.vm.define "ubuntu-jammy64-#{instance_id}" do |instance|
 
+      instance.vm.hostname = "ubuntu-jammy-#{instance_id}.vagrant.local"
+      instance.vm.network "private_network", ip: "192.168.56.20#{instance_id}"
+    
       instance.vm.provider "virtualbox" do |vb|
 
         # Display the VirtualBox GUI when booting the machine
         # vb.gui = true
 
         # Customize the amount of memory on the VM:
-        vb.memory = "8192"
-        vb.cpus = 4
+        vb.memory = "4096"
+        vb.cpus = 2
 
         vb.customize ["modifyvm", :id, "--audio", "none"]
         # vb.customize ["modifyvm", :id, "--uartmode1", "file", File::NULL]
@@ -92,20 +92,19 @@ Vagrant.configure("2") do |config|
 
       # Only execute once the Ansible provisioner,
       # when all the machines are up and ready.
-      if instance_id == 3
+      if instance_id == N
         instance.vm.provision :ansible do |ansible|
           # Disable default limit to connect to all the machines
           ansible.limit = "all"
           ansible.playbook = "provisioning/site.yml"
-          ansible.groups = {
-            "kubernetes_masters" => ["k1"],
-            "kubernetes_nodes" => ["k2", "k3"],
-            "all_groups:children" => ["kubernetes_masters", "kubernetes_nodes"],
-          }
+          # ansible.groups = {
+          #  "master_data_group" => ["master-data1", "master-data2", "master-data3"],
+          #  "ingest_group" => ["ingest1"],
+          #  "all-groups:children" => ["master_data", "ingest"],
+          # }
           # ansible.verbose = "v"
         end
       end
     end
   end
-
 end
