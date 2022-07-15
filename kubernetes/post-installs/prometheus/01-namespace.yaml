@@ -1,0 +1,6 @@
+# https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
