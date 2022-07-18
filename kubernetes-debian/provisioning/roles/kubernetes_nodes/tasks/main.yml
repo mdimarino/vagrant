@@ -1,0 +1,8 @@
+---
+# tasks file for kubernetes_nodes
+
+- name: Copy the join command to server location
+  copy: src=join-command dest=/tmp/join-command.sh mode=0755
+
+- name: Join the node to cluster
+  command: sh /tmp/join-command.sh

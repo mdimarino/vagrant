@@ -1,0 +1,1 @@
+kubeadm join 192.168.56.221:6443 --token mnhi48.oys77tithd3bza02 --discovery-token-ca-cert-hash sha256:4b818506fa44bacc25379ba5d8a8c9a1b5cd8d2cb59f554f75a9f8aceb3c6623 

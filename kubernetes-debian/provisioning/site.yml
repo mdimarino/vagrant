@@ -1,0 +1,25 @@
+---
+# This playbook deploys the whole application stack in this site.
+
+- name: apply common configuration to all nodes
+  hosts: all
+  become: true
+  vars:
+    k8s_packages_version: 1.23.8-00
+  roles:
+  - common
+  - kubernetes
+
+- name: apply configuration to kubernetes_masters
+  hosts: kubernetes_masters
+  become: true
+  vars:
+    k8s_version: 1.23.8
+  roles:
+  - kubernetes_masters
+
+- name: apply configuration to kubernetes_nodes
+  hosts: kubernetes_nodes
+  become: true
+  roles:
+  - kubernetes_nodes
