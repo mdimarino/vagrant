@@ -9,7 +9,7 @@
   - common
   - swapfile
   # - docker
-  - jenkins
+  # - jenkins
 
 - name: apply jenkins_masters configuration to jenkins masters nodes
   hosts: jenkins_masters
@@ -24,4 +24,4 @@
 
   roles:
   - jenkins_slaves
-
+  - docker

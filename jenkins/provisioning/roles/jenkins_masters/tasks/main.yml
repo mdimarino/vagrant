@@ -1,13 +1,13 @@
 ---
 # tasks file for jenkins-masters
 
-- name: insert/update IP address block in /etc/hosts
-  blockinfile:
-    path: /etc/hosts
-    block: |
-      192.168.56.161    jenkins01.vagrant.local  jenkins01
-      192.168.56.162    jenkins02.vagrant.local  jenkins02
-      192.168.56.163    jenkins03.vagrant.local	 jenkins03
+# - name: insert/update IP address block in /etc/hosts
+#   blockinfile:
+#     path: /etc/hosts
+#     block: |
+#       192.168.56.161    jenkins01.vagrant.local  jenkins01
+#       192.168.56.162    jenkins02.vagrant.local  jenkins02
+#       192.168.56.163    jenkins03.vagrant.local	 jenkins03
 
 - name: add apt key for jenkins
   apt_key: url=https://pkg.jenkins.io/debian/jenkins.io.key state=present
@@ -15,11 +15,11 @@
 - name: add apt repository for jenkins
   apt_repository: repo='deb http://pkg.jenkins.io/debian binary/' filename='jenkins' state=present update_cache=yes
 
-- name: install openjdk-8-jdk-headless package first
+- name: install openjdk-11-jdk-headless package first
   apt: name={{ packages }} state=present autoremove=yes
   vars:
     packages:
-      - openjdk-8-jdk-headless
+      - openjdk-11-jdk-headless
 
 - name: install packages
   apt: name={{ packages }} state=present autoremove=yes

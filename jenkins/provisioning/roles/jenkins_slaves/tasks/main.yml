@@ -1,19 +1,19 @@
 ---
 # tasks file for jenkins-slaves
 
-- name: insert/update IP address block in /etc/hosts
-  blockinfile:
-    path: /etc/hosts
-    block: |
-      192.168.56.161    jenkins01.vagrant.local  jenkins01
-      192.168.56.162    jenkins02.vagrant.local  jenkins02
-      192.168.56.163    jenkins03.vagrant.local	 jenkins03
+# - name: insert/update IP address block in /etc/hosts
+#   blockinfile:
+#     path: /etc/hosts
+#     block: |
+#       192.168.56.161    jenkins01.vagrant.local  jenkins01
+#       192.168.56.162    jenkins02.vagrant.local  jenkins02
+#       192.168.56.163    jenkins03.vagrant.local	 jenkins03
 
-- name: install openjdk-8-jdk-headless package first
+- name: install openjdk-11-jdk-headless package first
   apt: name={{ packages }} state=present autoremove=yes
   vars:
     packages:
-      - openjdk-8-jdk-headless
+      - openjdk-11-jdk-headless
 
 # - name: install packages
 #   apt: name={{ packages }} state=present autoremove=yes
