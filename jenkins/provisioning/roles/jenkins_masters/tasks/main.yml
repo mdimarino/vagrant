@@ -1,14 +1,6 @@
 ---
 # tasks file for jenkins-masters
 
-# - name: insert/update IP address block in /etc/hosts
-#   blockinfile:
-#     path: /etc/hosts
-#     block: |
-#       192.168.56.161    jenkins01.vagrant.local  jenkins01
-#       192.168.56.162    jenkins02.vagrant.local  jenkins02
-#       192.168.56.163    jenkins03.vagrant.local	 jenkins03
-
 - name: add apt key for jenkins
   apt_key: url=https://pkg.jenkins.io/debian/jenkins.io.key state=present
 
@@ -27,6 +19,7 @@
     packages:
       - jenkins
       - nginx
+      - chrony
 
 - name: change /etc/nginx/sites-available/jenkins file
   copy: src=nginx_jenkins dest=/etc/nginx/sites-available/jenkins owner=root group=root mode=0644 backup=yes

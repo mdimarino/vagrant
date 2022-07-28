@@ -5,7 +5,7 @@
   apt: name={{ packages }} state=present autoremove=yes
   vars:
     packages:
-      - ntp
+      - chrony
 
 - name: add apt key for docker packages
   apt_key: url='https://download.docker.com/linux/ubuntu/gpg' state=present

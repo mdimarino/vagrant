@@ -23,5 +23,5 @@
   become: True
 
   roles:
-  - jenkins_slaves
   - docker
+  - jenkins_slaves
